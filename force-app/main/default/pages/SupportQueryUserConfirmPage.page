@@ -1,0 +1,79 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="true" standardController="Support_Query__c" extensions="SupportQueryController">
+<!--<apex:stylesheet value="{!$Resource.BritishGasStyle}"/>-->
+<style>
+    .pbHeader {
+        height:100%;
+        padding: 2% 2% 2% 2% !important;
+        font-size:20px;
+    }
+</style>
+<body style="height:100%;width:100%">
+<apex:form id="myForm" >
+  <div class="page" align="center" style="width:100%;height:100%;padding:2% 2% 2% 0%">
+  <div class="wrapper">
+    <apex:pageMessages />
+    <apex:pageBlock title="User Details" rendered="{!!isDetail}">
+        <div style="height:100%;font-size:12px;">
+        <apex:pageBlockSection columns="1" >
+       <apex:pageBlockSectionItem >
+           <apex:outputText value="Enter your Pay Number: "/>
+           <apex:inputText value="{!paynumber}"/>
+       </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        <div align="center">     
+        <apex:commandButton value="confirm" action="{!confirm}" rerender="myForm"/>
+         <apex:commandButton value="Register for New User" action="{!newUserRegister}" rendered="{!isError}"/>
+        </div>
+        </div>
+    </apex:pageBlock>
+    
+       <!-- <apex:outputPanel rendered="{!isError}">
+            <div style="border: 5px solid grey;">
+           <div align="center" style="padding:5% 5% 5% 5%">
+              <p style="font-size:15px;">This paynumber is not available. Please click &nbsp; 
+             <apex:commandLink value="Register for new User" action="{!newUserRegister}" style="font-weight:bold;font-size:17px;"></apex:commandLink> &nbsp; to register.</p>
+           </div> 
+           </div> 
+        </apex:outputPanel>-->
+        
+        
+
+    
+    <apex:pageBlock rendered="{!!isError&&isDetail}" title="New I Need Help ">
+        <div style="height:100%;font-size:12px;">
+         <apex:pageBlockSection columns="2">
+             <apex:pageBlockSectionItem >
+                 <apex:outputText value="Logging User "/>
+                 <apex:outputText >{!squ.First_Name__c} {!squ.Last_Name__c}</apex:outputText>
+             </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                 <apex:outputText value="Email "/>
+                 <apex:outputField value="{!squ.Email__c}"/>
+             </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                 <apex:outputText value="Phone "/>
+                 <apex:outputField value="{!squ.Contact_Phone_Number__c}"/>
+             </apex:pageBlockSectionItem>
+             <apex:outputText />
+             <apex:repeat value="{!fields}" var="f">
+                  <apex:inputField value="{!supportQuery[f.fieldPath]}"/>
+              </apex:repeat>
+         </apex:pageBlockSection>
+         <apex:pageBlockSection columns="1">
+                 <apex:inputField value="{!supportQuery.Detail__c}" style="width:80%"/>
+         </apex:pageBlockSection>
+         <apex:pageBlockSection columns="1">
+                 <apex:inputField value="{!supportQuery.Support_Query_User__c}" style="width:80%"/>
+         </apex:pageBlockSection>
+         <div align="center">     
+             <apex:commandButton value="Submit" action="{!submit}" rerender="myForm"/>
+             <!--<apex:commandButton value="Cancel" action="{!Cancel}" rerender="myForm"/>-->
+         </div>
+         </div>
+     </apex:pageBlock>
+   
+    </div>
+    </div>  
+    </apex:form> 
+    </body>
+</apex:page>

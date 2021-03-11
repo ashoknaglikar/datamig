@@ -1,0 +1,8 @@
+<apex:page standardController="RMT_Supplier__c" extensions="RMTmakeEmployeeInactive" action="{!makeEmployeeInactive}">
+<apex:pageMessages />
+<apex:form >
+<div align="center">
+    <apex:commandButton value="Back" action="{!back}"/>
+</div>
+</apex:form>
+</apex:page>

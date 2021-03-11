@@ -1,0 +1,604 @@
+<apex:component controller="CS_QuoteOnlineTemplateController"  layout="none">
+    <apex:attribute name="wayToPayVersion" description="Boolean to render the sections" type="integer"/>
+ 
+    
+    <apex:outputpanel rendered="{!showYourPayOptions}">
+        <page size='A4' id="page3">
+          
+          <apex:outputPanel rendered="{!if(wayToPayVersion==2,true,false)}">
+            <div class="content" style="page-break-before: always;display:{!if(wayToPayVersion==2, "block", "none")};">
+                <div class="clearfix" id="logoPng3">
+                    <apex:image id="theImageBG2" styleClass="bgLogo" value="{!URLFOR($Resource.quoteOnlinePageRes, 'BG_logo_s.resource')}" width="150" rendered="{!logoBG == true}" />
+                    <apex:image id="theImageSG2" styleClass="bgLogo" value="{!URLFOR($Resource.quoteOnlinePageRes, 'SG_logo_s.resource')}" width="150" rendered="{!logoBG == false}" />
+                </div>
+                <div style ="position:relative;top:-20px">
+                    <p class="pageHeading">Here are your payment options</p>
+                        <h3 style="font-size:15px">Credit and debit card</h3>
+                            <p style = "font-size:13px">
+                                We accept debit and most credit cards if you want to pay using your own funds, or a loan that you've arranged yourself.
+                                <br/>   
+                            </p>
+                            
+                        <h3 style="font-size:15px;color: #00baf2;font-weight:bold;">Loans arranged through British Gas</h3>
+                        <div class="boldText" style="font-size:15px">24 month interest-free loan (0% APR)</div>
+                            <ul style="font-size: 13px;">
+                                <li>No deposit needed</li>
+                                <li>No interest payable during the 24 months.</li>
+                                <li>First monthly payment is paid one month after installation.</li>
+                            </ul>
+                            
+                        <div class="boldText" style="font-size:15px">26 month interest-free loan (0% APR)</div>
+                            <ul style="font-size: 13px;">
+                                <li>No deposit needed</li>
+                                <li>No interest payable during the 26 months.</li>
+                                <li>First monthly payment is paid one month after installation</li>
+                                <li>First <b>two</b> monthly payments are <b>£0</b> followed by 24 minimum monthly payments.</li>
+                            </ul>
+
+                        <div class="boldText" style="font-size:15px">36 to 120 month loans ({!aprUsed} APR)</div> 
+                            <ul style="font-size: 13px;">
+                                <li>3, 5, 8 and 10-year loans available</li>
+                                <li>For customers who would like variety of monthly payments to choose from </li>
+                                 <li>No deposit needed</li>
+                                <li>Overpay or repay early subject to a maximum of 2 months interest</li>
+                                <li>First monthly payment is paid one month after installation.</li>
+                            </ul>
+
+
+                       
+                            <p style='font-size: 13px;'>
+                                <apex:outputtext value="{!summaryTableHeading}" escape="false"/>&nbsp;acts as a credit broker and not the lender 
+                                and offers products from a panel of lenders. Availability of credit depends on your status and credit checks. The minimum loan amount is £1,000. 
+                            </p>
+
+                    <h3 style='font-size: 15px;'>Your personalised loan illustration</h3>
+                    <p style='font-size: 13px;'>
+                        This shows the minimum monthly payment and the total amount repayable over six different periods for a loan amount of 
+                        <span id="waysToPayTotalAmount"> 
+                            <apex:outputtext value="{!loanAmountAB}" escape="false"/> 
+                        </span> 
+                        if you were to pay
+                        a deposit of <span class='boldText' id='waysToPayDeposit'>
+                            <apex:outputtext value="{!depositB}" escape="false"/>
+                        </span>. This includes both the interest-free credit and other loan options.<br /><br />
+                    </p>
+                    <table id='illustration-wrapper' style='width:100%'>
+                        <tr>
+                            <td class='align-center'>
+                                <div class='flex-box'>
+                                    <p style='font-size: 14px' class='illustration-label boldText'>Cash price(A)</p>
+                                    <p style='font-size: 14px' class='illustration-value'><span id='illustrationTotal'><apex:outputtext value="{!totalPriceA}" escape="false"/></span></p>
+                                </div>
+                            </td>
+                            <td class='align-center'>
+                                <div class='flex-box'>
+                                    <p style='font-size: 14px' class='illustration-label boldText'>Deposit(B)</p>
+                                    <p style='font-size: 14px' class='illustration-value'><span id='illustrationDeposit'><apex:outputtext value="{!depositB}" escape="false"/></span></p>
+                                </div>
+                            </td>
+                            <td class='align-center'>
+                                <div class='flex-box'>
+                                    <p style='font-size: 14px' class='illustration-label boldText'>Loan amount(A minus B)</p>
+                                    <p style='font-size: 14px' class='illustration-value'><span id='illustrationLoanAmount'><apex:outputtext value="{!loanAmountAB}" escape="false"/></span></p>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                     <table class="loanTableWithIFC" id="personalisedIllustration" style="font-size:10px;">
+                         
+                        <tr>
+                            <th class="boldText" style="padding-left: 0.5em;font-size:120%;width:183px;background-color:#00baf2;border:2px solid white ">Representative APR</th>
+                             <apex:repeat value="{!inputQuoteData.aprmap}" var="key">
+                            <th colspan="{!inputQuoteData.aprmap[key]}" class="centerText boldText" style="font-size:150%;width:73px;background-color:#00baf2;border:2px solid white ">{!key}</th></apex:repeat>
+                            <!--<th colspan="4" class="centerText boldText" style="font-size:150%;background-color:#00baf2;border:2px solid white">{!aprUsed}</th>-->
+
+                        </tr>
+                        <tr>
+                            <td class="boldText" style="padding-left: 1em;text-align: left; background-color: #C8C8C8;border:2px solid white">Length of loan</td>
+                            <apex:repeat value="{!inputQuoteData.monthlist}" var="length">
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">{!length} months</td></apex:repeat>
+                            
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em; background-color: #C8C8C8;border:2px solid white">Minimum monthly payment</td>
+                            <apex:repeat value="{!inputQuoteData.monthlypayList}" var="monthypay">
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_2"><apex:outputtext value="{!monthypay}" escape="false"/></span></td></apex:repeat>
+                            
+                             
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em;background-color: #C8C8C8;border:2px solid white">Total amount repayable over the period</td>
+                            <apex:repeat value="{!inputQuoteData.Totalpaylist}" var="totalpay">
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span><apex:outputtext value="{!totalpay}" escape="false"/></span></td></apex:repeat>
+                            
+                            
+                        </tr>
+                        <tr>
+                          <td style="padding-left: 1em;background-color: #C8C8C8;border:2px solid white">Rate of Interest</td>
+                          <apex:repeat value="{!inputQuoteData.aprmap}" var="key">
+                          <td colspan="{!inputQuoteData.aprmap[key]}" class="centerText" style="background-color: #C8C8C8;border:2px solid white">{!key}</td>
+                          </apex:repeat>
+                        </tr>
+                         
+                    </table>
+                    <!--<table class="loanTableWithIFC" id="personalisedIllustration" style="font-size:10px;">
+                        <tr>
+                            <th class="boldText" style="padding-left: 0.5em;font-size:120%;width:183px;background-color:#00baf2;border:2px solid white ">Representative APR</th>
+                            <th colspan="2" class="centerText boldText" style="font-size:150%;width:73px;background-color:#00baf2;border:2px solid white ">0%</th>
+                            <th colspan="4" class="centerText boldText" style="font-size:150%;background-color:#00baf2;border:2px solid white">{!aprUsed}</th>
+
+                        </tr>
+                        <tr>
+                            <td class="boldText" style="padding-left: 1em;text-align: left; background-color: #C8C8C8;border:2px solid white">Length of loan</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">24 months</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">26 months</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">36 months</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">60 months</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">96 months</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">120 months</td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em; background-color: #C8C8C8;border:2px solid white">Minimum monthly payment</td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_2"><apex:outputtext value="{!inputQuoteData.mmp_2}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_10"><apex:outputtext value="{!inputQuoteData.mmp_2}*" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_3"><apex:outputtext value="{!inputQuoteData.mmp_3}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_5"><apex:outputtext value="{!inputQuoteData.mmp_5}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_8"><apex:outputtext value="{!inputQuoteData.mmp_8}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_10"><apex:outputtext value="{!inputQuoteData.mmp_10}" escape="false"/></span></td>
+                             
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em;background-color: #C8C8C8;border:2px solid white">Total amount repayable over the period</td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_2"><apex:outputtext value="{!inputQuoteData.tar_2}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_10"><apex:outputtext value="{!inputQuoteData.tar_2}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_3"><apex:outputtext value="{!inputQuoteData.tar_3}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_5"><apex:outputtext value="{!inputQuoteData.tar_5}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_8"><apex:outputtext value="{!inputQuoteData.tar_8}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_10"><apex:outputtext value="{!inputQuoteData.tar_10}" escape="false"/></span></td>
+                            
+                        </tr>
+                        <tr>
+                          <td style="padding-left: 1em;background-color: #C8C8C8;border:2px solid white">Rate of Interest</td>
+                          <td colspan="2" class="centerText" style="background-color: #C8C8C8;border:2px solid white">0%</td>
+                          <td colspan="4" class="centerText" style="background-color: #C8C8C8;border:2px solid white">{!aprUsed}</td>
+                        </tr>
+                    </table>-->
+                     <span>
+                        <p style="font-size:9px;float:right;margin-top:5px;">*26 months 0% ONLY-first two monthly repayments are £0. The minimum monthly payment starts on the third month.</p>
+                    </span>
+                </div>
+                
+                  <br/>
+                
+                <div style="float:left;">
+                    
+                    <p style= "font-size: 9px;margin-left: -8px;margin-right: -10px">
+                        
+                        <span id='company2'>{!summaryTableHeading}</span> is a trading name of British Gas New Heating Limited. Registered in England and Wales (No. 06723244). 
+                        British Gas New Heating Limited is an Appointed Representative of British Gas Services Limited which is authorised and regulated by the Financial Conduct Authority. 
+                        Both registered at: Millstream, Maidenhead Road, Windsor, Berkshire SL4 5GD. britishgas.co.uk
+                        <br/><br/>
+                        
+                        <apex:outputtext value="SQTBR1OB 07/19" rendered="{!summaryTableHeading == 'British Gas'}"/>
+                        <apex:outputtext value="SQTSC1OB 07/19" rendered="{!summaryTableHeading == 'Scottish Gas'}"/>
+                        </p>
+                     </div> 
+                </div>
+                </apex:outputpanel>
+                     <!--<div>
+                           <table style=" border-collapse:collapse;border:1px black;font-size:9px;margin-left:-8px;" >
+                                <tr style="border:1px solid black;">
+                                   
+                                    
+                                    <td style="border:1px solid black;height:10px;">
+                                        <table>
+                                        <tr>
+                                        <td><p><span class="pink">EG+ job number:</span><span style="font-size:11px;" class="boldText">754000-1</span></p></td>
+                                        <td></td>
+                                        </tr>
+                                        <tr>
+                                        <td><p>Google Drive:shared drives:WIP production:Studio:TEST:754000-1_BG_Your payment option page_Vo1.indd</p></td>
+                                        <td></td>
+                                        </tr>
+                                        <tr>
+                                        <td><p><span class="pink">Trim:</span>274x210mm&nbsp;|&nbsp;<span class="pink"> Visual Area:</span>246x185mm&nbsp;|&nbsp;<span class="pink">Bleed:</span>3mm</p></td>
+                                        <td><span class="pink" style="float:right;margin-left:10px;">ARTWORK @ 100%</span></td>
+                                        </tr>
+                                        </table>
+                                    </td>
+                                   
+                                    <td style="border:1px solid black;height:10px;">
+                                        <table>
+                                            <tr>
+                                                <td class="pink" >Date:</td>
+                                                <td style="text-align:right;">04.05.20</td>
+                                            </tr>
+                                           <tr>
+                                                <td class="pink">Time:</td>
+                                                <td style="text-align:right;">12.26 GMT+1</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="pink">DI:</td>
+                                                <td style="text-align:right;">Andy Stephanides</td>
+                                            </tr>
+                                        </table>
+                                        
+                                    </td>
+                                    <td style="border:1px solid black;height:10px;">
+                                    
+                                        <table>
+                                            <tr>
+                                                <td class="boldText" style="font-size:9px;"><p>PRE</p>
+                                                <p>PRESS</p></td>
+                                                <td class="boldText" style="font-size:12px;">0</td>
+                                            </tr>
+                                        </table>
+                                        
+                                    </td>
+                                   
+                                </tr>
+                                <tr style="border:1px solid black;">
+                                    <td colspan="3" style="border:1px solid black;height:10px;">
+                                        <p style="padding:7px 3px 15px 3px"><span style="float:left;"><span class="pink">Export Option:</span> EG+ Main Preset&nbsp;|&nbsp; <span class="pink">Ration:</span>1.414 &nbsp;|&nbsp; <span class="pink">Page 1 of 1</span></span>
+                                        <span style="float:right">Lakeside House, 30 The Causeway,Stanies, TW18 3 BY&nbsp;|&nbsp;www.egplusww.com</span></p>  
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>-->
+                        
+             <!--------------------------------------------------------version 0 ------------------------------------------------------------------------------>
+             
+             <div class="content" style="page-break-before: always;display:{!if(wayToPayVersion==0, "block", "none")};">
+                <div class="clearfix" id="logoPng3">
+                    <apex:image id="theImageBG21" styleClass="bgLogo" value="{!URLFOR($Resource.quoteOnlinePageRes, 'BG_logo_s.resource')}" width="150" rendered="{!logoBG == true}" />
+                    <apex:image id="theImageSG21" styleClass="bgLogo" value="{!URLFOR($Resource.quoteOnlinePageRes, 'SG_logo_s.resource')}" width="150" rendered="{!logoBG == false}" />
+                </div>
+                <div style ="position:relative;top:-20px">
+                    <p class="pageHeading">Here are your payment options</p>
+                        <h3 style="font-size:15px">Credit and debit card</h3>
+                            <p style = "font-size:13px">
+                                We accept debit and most credit cards if you want to pay using your own funds, or a loan that you've arranged yourself.
+                                <br/>   
+                            </p>
+                            
+                        <h3 style="font-size:15px;color: #00baf2;font-weight:bold;">Loans arranged through British Gas</h3>
+                        <div class="boldText" style="font-size:15px">2 Years interest-free loan (0% APR)</div>
+                            <ul style="font-size: 13px;">
+                               <li>Available over 2 years at 0%</li>
+                                <li>No deposit needed</li>
+                                <li>No interest payable during the loan period.</li>
+                            </ul>
+
+                        <div class="boldText" style="font-size:15px">3 to 10 Year loans ({!aprUsed} APR)</div> 
+                            <ul style="font-size: 13px;">
+                                <li>For customers who would like a variety of monthly repayments to choose from</li>
+                                <li>Available over 3, 5, 8 or 10 years</li>
+                                <li>APR {!aprUsed}</li>
+                                <li>Overpay or repay early subject to a maximum of 2 months interest</li>
+                                <li>If you make overpayments you will save future interest and reduce the length of the loan</li>
+                                <li>No deposit needed.</li>
+                            </ul>
+
+
+                       
+                            <p style='font-size: 13px;'>
+                                <apex:outputtext value="{!summaryTableHeading}" escape="false"/>&nbsp;acts as a credit broker and not the lender 
+                                and offers products from a panel of lenders. Availability of credit depends on your status and credit checks. The minimum loan amount is £1,000. 
+                            </p>
+
+                    <h3 style='font-size: 15px;'>Your personalised loan illustration</h3>
+                    <p style='font-size: 13px;'>
+                        This shows the minimum monthly payment and the total amount repayable over six different periods for a loan amount of 
+                        <span id="waysToPayTotalAmount"> 
+                            <apex:outputtext value="{!loanAmountAB}" escape="false"/> 
+                        </span> 
+                        if you were to pay
+                        a deposit of <span class='boldText' id='waysToPayDeposit'>
+                            <apex:outputtext value="{!depositB}" escape="false"/>
+                        </span>. This includes both the interest-free credit and other loan options.<br /><br />
+                    </p>
+                    <table id='illustration-wrapper' style='width:100%'>
+                        <tr>
+                            <td class='align-center'>
+                                <div class='flex-box'>
+                                    <p style='font-size: 14px' class='illustration-label boldText'>Cash price(A)</p>
+                                    <p style='font-size: 14px' class='illustration-value'><span id='illustrationTotal'><apex:outputtext value="{!totalPriceA}" escape="false"/></span></p>
+                                </div>
+                            </td>
+                            <td class='align-center'>
+                                <div class='flex-box'>
+                                    <p style='font-size: 14px' class='illustration-label boldText'>Deposit(B)</p>
+                                    <p style='font-size: 14px' class='illustration-value'><span id='illustrationDeposit'><apex:outputtext value="{!depositB}" escape="false"/></span></p>
+                                </div>
+                            </td>
+                            <td class='align-center'>
+                                <div class='flex-box'>
+                                    <p style='font-size: 14px' class='illustration-label boldText'>Loan amount(A minus B)</p>
+                                    <p style='font-size: 14px' class='illustration-value'><span id='illustrationLoanAmount'><apex:outputtext value="{!loanAmountAB}" escape="false"/></span></p>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                     <table class="loanTableWithIFC" id="personalisedIllustration" style="font-size:10px;">
+                         
+                        <tr>
+                            <th class="boldText" style="padding-left: 0.5em;font-size:120%;width:183px;background-color:#00baf2;border:2px solid white ">Representative APR</th>
+                             <apex:repeat value="{!inputQuoteData.aprmap}" var="key">
+                            <th colspan="{!inputQuoteData.aprmap[key]}" class="centerText boldText" style="font-size:150%;width:73px;background-color:#00baf2;border:2px solid white ">{!key}</th></apex:repeat>
+                            <!--<th colspan="4" class="centerText boldText" style="font-size:150%;background-color:#00baf2;border:2px solid white">{!aprUsed}</th>-->
+
+                        </tr>
+                        <tr>
+                            <td class="boldText" style="padding-left: 1em;text-align: left; background-color: #C8C8C8;border:2px solid white">Length of loan</td>
+                             <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">2 Years</td>
+                             <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">3 Years</td>
+                             <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">5 Years</td>
+                             <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">8 Years</td>
+                             <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">10 Years</td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em; background-color: #C8C8C8;border:2px solid white">Minimum monthly payment</td>
+                            <apex:repeat value="{!inputQuoteData.monthlypayList}" var="monthypay">
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_2"><apex:outputtext value="{!monthypay}" escape="false"/></span></td></apex:repeat>
+                            
+                             
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em;background-color: #C8C8C8;border:2px solid white">Total amount repayable over the period</td>
+                            <apex:repeat value="{!inputQuoteData.Totalpaylist}" var="totalpay">
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span><apex:outputtext value="{!totalpay}" escape="false"/></span></td></apex:repeat>
+                            
+                            
+                        </tr>
+                        <tr>
+                          <td style="padding-left: 1em;background-color: #C8C8C8;border:2px solid white">Rate of Interest</td>
+                          <apex:repeat value="{!inputQuoteData.aprmap}" var="key">
+                          <td colspan="{!inputQuoteData.aprmap[key]}" class="centerText" style="background-color: #C8C8C8;border:2px solid white">{!key}</td>
+                          </apex:repeat>
+                        </tr>
+                         
+                    </table>
+                    <!--<table class="loanTableWithIFC" id="personalisedIllustration" style="font-size:10px;">
+                        <tr>
+                            <th class="boldText" style="padding-left: 0.5em;font-size:120%;width:183px;background-color:#00baf2;border:2px solid white ">Representative APR</th>
+                            <th colspan="2" class="centerText boldText" style="font-size:150%;width:73px;background-color:#00baf2;border:2px solid white ">0%</th>
+                            <th colspan="4" class="centerText boldText" style="font-size:150%;background-color:#00baf2;border:2px solid white">{!aprUsed}</th>
+
+                        </tr>
+                        <tr>
+                            <td class="boldText" style="padding-left: 1em;text-align: left; background-color: #C8C8C8;border:2px solid white">Length of loan</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">24 months</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">26 months</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">36 months</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">60 months</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">96 months</td>
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">120 months</td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em; background-color: #C8C8C8;border:2px solid white">Minimum monthly payment</td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_2"><apex:outputtext value="{!inputQuoteData.mmp_2}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_10"><apex:outputtext value="{!inputQuoteData.mmp_2}*" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_3"><apex:outputtext value="{!inputQuoteData.mmp_3}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_5"><apex:outputtext value="{!inputQuoteData.mmp_5}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_8"><apex:outputtext value="{!inputQuoteData.mmp_8}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_10"><apex:outputtext value="{!inputQuoteData.mmp_10}" escape="false"/></span></td>
+                             
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em;background-color: #C8C8C8;border:2px solid white">Total amount repayable over the period</td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_2"><apex:outputtext value="{!inputQuoteData.tar_2}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_10"><apex:outputtext value="{!inputQuoteData.tar_2}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_3"><apex:outputtext value="{!inputQuoteData.tar_3}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_5"><apex:outputtext value="{!inputQuoteData.tar_5}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_8"><apex:outputtext value="{!inputQuoteData.tar_8}" escape="false"/></span></td>
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="tar_10"><apex:outputtext value="{!inputQuoteData.tar_10}" escape="false"/></span></td>
+                            
+                        </tr>
+                        <tr>
+                          <td style="padding-left: 1em;background-color: #C8C8C8;border:2px solid white">Rate of Interest</td>
+                          <td colspan="2" class="centerText" style="background-color: #C8C8C8;border:2px solid white">0%</td>
+                          <td colspan="4" class="centerText" style="background-color: #C8C8C8;border:2px solid white">{!aprUsed}</td>
+                        </tr>
+                    </table>-->
+                     <!--<span>
+                        <p style="font-size:9px;float:right;margin-top:5px;">*26 months 0% ONLY-first two monthly repayments are £0. The minimum monthly payment starts on the third month.</p>
+                    </span>-->
+                </div>
+                
+                  <br/>
+                
+                <div style="float:left;">
+                    
+                    <p style= "font-size: 9px;margin-left: -8px;margin-right: -10px">
+                        
+                        <span id='company2'>{!summaryTableHeading}</span> is a trading name of British Gas New Heating Limited. Registered in England and Wales (No. 06723244). 
+                        British Gas New Heating Limited is an Appointed Representative of British Gas Services Limited which is authorised and regulated by the Financial Conduct Authority. 
+                        Both registered at: Millstream, Maidenhead Road, Windsor, Berkshire SL4 5GD. britishgas.co.uk
+                        <br/><br/>
+                        
+                        <apex:outputtext value="SQTBR1OB 07/19" rendered="{!summaryTableHeading == 'British Gas'}"/>
+                        <apex:outputtext value="SQTSC1OB 07/19" rendered="{!summaryTableHeading == 'Scottish Gas'}"/>
+                        </p>
+                     </div> 
+                </div>
+            
+            
+            
+            
+            <!----------------------------------------------old version ------------------------------------------------------------------------------------------>
+            
+            <apex:outputPanel rendered="{!if(wayToPayVersion==1,true,false)}">
+           <div class="content" style="page-break-before: always;display:{!if(wayToPayVersion==1, "block", "none")};">
+                <div class="clearfix" id="logoPng3">
+                    <apex:image id="theImageBG2_" styleClass="bgLogo" value="{!URLFOR($Resource.quoteOnlinePageRes, 'BG_logo_s.resource')}" width="150" rendered="{!logoBG == true}" />
+                    <apex:image id="theImageSG2_" styleClass="bgLogo" value="{!URLFOR($Resource.quoteOnlinePageRes, 'SG_logo_s.resource')}" width="150" rendered="{!logoBG == false}" />
+                </div>
+                <div style ="position:relative;top:-20px">
+                    <p class="pageHeading">Here are your payment options</p>
+                        <p style = "font-size:13px">You may wish to use your own funds or a loan that you've arranged yourself.</p>
+                        <h3 style="font-size:15px">Credit and debit card</h3>
+                            <p style = "font-size:13px">
+                                We accept debit and most credit cards if you want to pay in full.
+                                <br/>   
+                            </p>
+                            
+                        <h3 style="font-size:15px;color: #00baf2;font-weight:bold;">Loans arranged through British Gas</h3>
+                        <div class="boldText" style="font-size:15px">24 and 30-month interest-free loan (0% APR)</div>
+                            <ul style="font-size: 13px;">
+                                
+                                <li>Available over 24 and 30 months at 0%</li>
+                                <li>No deposit needed</li>
+                                <li>No interest payable during the loan period.</li>
+                            </ul>
+
+                        <div class="boldText" style="font-size:15px">60 to 120 month loan ({!aprUsed} APR)</div> 
+                            <ul style="font-size: 13px;">
+                              
+                                <li>For customers who would like a variety of monthly repayments to choose from</li>
+                                <li>Available over 5, 8 or 10 years</li>
+                                <li>APR {!aprUsed}</li>
+                                <li>Overpay or repay early subject to a maximum of 2 months interest</li>
+                                <li>If you make overpayments you will save future interest and reduce the length of the loan</li>
+                                <li>No deposit needed.</li>
+                            </ul>
+
+
+                       
+                            <p style='font-size: 13px;'>
+                                <apex:outputtext value="{!summaryTableHeading}" escape="false"/>&nbsp;acts as a <span class="boldText">credit broker</span> and not the lender 
+                                and offers products from a panel of lenders. Availability of credit depends on your status and credit checks. The minimum loan amount is £1,000. 
+                            </p>
+
+                    <h3 style='font-size: 15px;'>Your personalised loan illustration</h3>
+                    <p style='font-size: 13px;'>
+                        This shows the minimum monthly payment and the total amount repayable over five different periods for a loan amount of 
+                        <span id="waysToPayTotalAmount"> 
+                            <apex:outputtext value="{!loanAmountAB}" escape="false"/> 
+                        </span> 
+                        if you were to pay
+                        a deposit of <span class='boldText' id='waysToPayDeposit'>
+                            <apex:outputtext value="{!depositB}" escape="false"/>
+                        </span>. This includes both the interest free credit and other loan options.<br /><br />
+                    </p>
+                    <table id='illustration-wrapper' style='width:100%'>
+                        <tr>
+                            <td class='align-center'>
+                                <div class='flex-box'>
+                                    <p style='font-size: 14px' class='illustration-label boldText'>Cash price</p>
+                                    <p style='font-size: 14px' class='illustration-value'><span id='illustrationTotal'><apex:outputtext value="{!totalPriceA}" escape="false"/></span></p>
+                                </div>
+                            </td>
+                            <td class='align-center'>
+                                <div class='flex-box'>
+                                    <p style='font-size: 14px' class='illustration-label boldText'>Deposit</p>
+                                    <p style='font-size: 14px' class='illustration-value'><span id='illustrationDeposit'><apex:outputtext value="{!depositB}" escape="false"/></span></p>
+                                </div>
+                            </td>
+                            <td class='align-center'>
+                                <div class='flex-box'>
+                                    <p style='font-size: 14px' class='illustration-label boldText'>Loan amount</p>
+                                    <p style='font-size: 14px' class='illustration-value'><span id='illustrationLoanAmount'><apex:outputtext value="{!loanAmountAB}" escape="false"/></span></p>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <table class="loanTableWithIFC" id="personalisedIllustration" style="font-size:10px;">
+                         
+                        <tr>
+                            <th class="boldText" style="padding-left: 0.5em;font-size:120%;width:183px;background-color:#00baf2;border:2px solid white ">Representative APR</th>
+                             <apex:repeat value="{!inputQuoteData.aprmap}" var="key">
+                            <th colspan="{!inputQuoteData.aprmap[key]}" class="centerText boldText" style="font-size:150%;width:73px;background-color:#00baf2;border:2px solid white ">{!key}</th></apex:repeat>
+                            <!--<th colspan="4" class="centerText boldText" style="font-size:150%;background-color:#00baf2;border:2px solid white">{!aprUsed}</th>-->
+
+                        </tr>
+                        <tr>
+                            <td class="boldText" style="padding-left: 1em;text-align: left; background-color: #C8C8C8;border:2px solid white">Length of loan</td>
+                            <apex:repeat value="{!inputQuoteData.monthlist}" var="length">
+                            <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">{!length} months</td></apex:repeat>
+                            
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em; background-color: #C8C8C8;border:2px solid white">Minimum monthly payment</td>
+                            <apex:repeat value="{!inputQuoteData.monthlypayList}" var="monthypay">
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span id="mmp_2"><apex:outputtext value="{!monthypay}" escape="false"/></span></td></apex:repeat>
+                            
+                             
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em;background-color: #C8C8C8;border:2px solid white">Total amount repayable over the period</td>
+                            <apex:repeat value="{!inputQuoteData.Totalpaylist}" var="totalpay">
+                            <td class="centerText" style="background-color: #C8C8C8;border:2px solid white"><span><apex:outputtext value="{!totalpay}" escape="false"/></span></td></apex:repeat>
+                            
+                            
+                        </tr>
+                        <tr>
+                          <td style="padding-left: 1em;background-color: #C8C8C8;border:2px solid white">Rate of Interest</td>
+                          <apex:repeat value="{!inputQuoteData.aprmap}" var="key">
+                          <td colspan="{!inputQuoteData.aprmap[key]}" class="centerText" style="background-color: #C8C8C8;border:2px solid white">{!key}</td>
+                          </apex:repeat>
+                        </tr>
+                         
+                    </table>
+                   <!-- <table class="loanTableWithIFC" id="personalisedIllustration">
+                        <tr>
+                            <td class="boldText" style="padding-left: 0.5em;font-size:120%;width:183px">Representative APR</td>
+                            <td class="centerText boldText" style="font-size:150%;width:73px;">0%</td>
+                            <td colspan="4" class="centerText boldText" style="font-size:150%;">{!aprUsed}</td>
+
+                        </tr>
+                        <tr>
+                            <td class="boldText" style="padding-left: 1em;text-align: left">Length of loan</td>
+                            <td class="boldText" style="text-align: center">2 years</td>
+                            <td class="boldText" style="text-align: center">3 years</td>
+                            <td class="boldText" style="text-align: center">5 years</td>
+                            <td class="boldText" style="text-align: center">8 years</td>
+                            <td class="boldText" style="text-align: center">10 years</td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em">Minimum monthly payment</td>
+                            <td class="centerText"><span id="mmp_2"><apex:outputtext value="{!inputQuoteData.mmp_2}" escape="false"/></span></td>
+                            <td class="centerText"><span id="mmp_3"><apex:outputtext value="{!inputQuoteData.mmp_3}" escape="false"/></span></td>
+                            <td class="centerText"><span id="mmp_5"><apex:outputtext value="{!inputQuoteData.mmp_5}" escape="false"/></span></td>
+                            <td class="centerText"><span id="mmp_8"><apex:outputtext value="{!inputQuoteData.mmp_8}" escape="false"/></span></td>
+                            <td class="centerText"><span id="mmp_10"><apex:outputtext value="{!inputQuoteData.mmp_10}" escape="false"/></span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 1em">Total amount repayable<br />over the period</td>
+                            <td class="centerText"><span id="tar_2"><apex:outputtext value="{!inputQuoteData.tar_2}" escape="false"/></span></td>
+                            <td class="centerText"><span id="tar_3"><apex:outputtext value="{!inputQuoteData.tar_3}" escape="false"/></span></td>
+                            <td class="centerText"><span id="tar_5"><apex:outputtext value="{!inputQuoteData.tar_5}" escape="false"/></span></td>
+                            <td class="centerText"><span id="tar_8"><apex:outputtext value="{!inputQuoteData.tar_8}" escape="false"/></span></td>
+                            <td class="centerText"><span id="tar_10"><apex:outputtext value="{!inputQuoteData.tar_10}" escape="false"/></span></td>
+                        </tr>
+                        <tr>
+                          <td style="padding-left: 1em">Rate of Interest</td>
+                          <td class="centerText">0%</td>
+                          <td colspan="4" class="centerText">{!aprUsed}</td>
+                        </tr>
+                    </table>-->
+                </div>
+                <div style="float:left;">
+                    
+                    <p style= "font-size: 9px;margin-left: -10px;margin-right: -10px">
+                        
+                        <span id='company2'>{!summaryTableHeading}</span> is a trading name of British Gas New Heating Limited. Registered in England and Wales (No. 06723244). 
+                        British Gas New Heating Limited is an Appointed Representative of British Gas Services Limited which is authorised and regulated by the Financial Conduct Authority. 
+                        Both registered at: Millstream, Maidenhead Road, Windsor, Berkshire SL4 5GD. britishgas.co.uk
+                        <br/><br/>
+                        
+                        <apex:outputtext value="SQTBR1OB 07/19" rendered="{!summaryTableHeading == 'British Gas'}"/>
+                        <apex:outputtext value="SQTSC1OB 07/19" rendered="{!summaryTableHeading == 'Scottish Gas'}"/>
+                        
+                    </p>
+                </div>
+            </div>
+             </apex:outputpanel>
+            
+        </page>
+        </apex:outputpanel>
+        
+        
+</apex:component>

@@ -1,0 +1,266 @@
+<apex:page standardController="Job__c" sidebar="false" showHeader="false" renderAs="pdf" standardStylesheets="false" extensions="ConstructionPlanExtension">
+<html> 
+    <head>
+        <style>
+            @page {
+                size: letter;
+                margin: 25mm;
+                @top-center {
+                    content: "Sample";
+                }
+                @bottom-center {
+                    content: "Page " counter(page) " of " counter(pages);
+                }
+            }
+            .page-break {
+                display:block;
+                page-break-after:always;
+            }
+            body {
+                font-family: Arial Unicode MS;
+            }
+            .tableClass {
+            border: 1px solid black;
+            }
+        </style>
+    </head>
+   
+    
+    <body>
+        <div style="page-break-after:always;">
+            <div style="Text-align:center; color:#8B008B;">
+            <h3>Construction Plan For {!Job__c.Name}</h3>
+            </div>
+           <table style = "padding: 15px;border-collapse: collapse;">
+                <caption></caption>
+                
+                    <tr >
+                        <th rowspan="13" style="text-align:center;border: 1px solid black;background-color: #00BFFF">Plan</th>
+                        <td style="border: 1px solid black;" >Business Name</td>
+                        <td style="border: 1px solid black;" colspan = "4" >British Gas Plc (legal entity)</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Customer Name</td>
+                        <td style="border: 1px solid black;" colspan = "4" >{!Job__c.Customer_Name__c}</td>
+                    
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Work Reference</td>
+                        <td style="border: 1px solid black;" colspan = "4" >{!Job__c.Name}</td>
+                        
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Description of Project</td>
+                        <td style="border: 1px solid black;" colspan = "4" >Details</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Project Dates</td>
+                        <td style="border: 1px solid black;" >Start</td>
+                        <td style="border: 1px solid black;" ><apex:outputfield value="{!Job__c.Installation_Date__c}"/></td>
+                        <td style="border: 1px solid black;" >Finish</td>
+                        <td style="border: 1px solid black;" ><apex:outputfield value="{!Job__c.Maximum_End_Date__c}"/></td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Work Description</td>
+                        <td style="border: 1px solid black;"  colspan = "4" >{!Job__c.Product_Interest__c}</td>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black;" colspan = "5"  >Duties</th>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Cient</td>
+                        <td style="border: 1px solid black;" rowspan="4" colspan = "4" >British Gas Plc (legal entity)</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Principal Designer</td>
+                        
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;"  >Designer(s)</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Principal Contractor</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Contractor(s)</td>
+                        <td style="border: 1px solid black;" colspan = "4" >
+                            <apex:repeat value="{!Job__c.Diary_Entries__r}" var="d">
+                                <apex:outputtext value="{!d.Employee_Name__c}, " rendered="{!d.Own_Labour__c == 0}"/> 
+                            </apex:repeat></td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Is there anything the client has made you aware of which are relevant to health and safety on site</td>
+                        <td style="border: 1px solid black;" colspan = "4" >Please refer to Installation Notes document</td>
+                    </tr>
+                    <tr>
+                        <th rowspan="9" style="text-align:center;border: 1px solid black;background-color: #87CEFA;">Working Together</th>
+                        <th style="border: 1px solid black;" colspan = "5" >Management of Work</th>
+                    
+                        
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Management structure and responsibilities.</td>
+                        <td style="border: 1px solid black;" colspan = "4" > {!Job__c.Area_Manager_L6__c} ,  {!Job__c.OMI_Manager_L7__c}
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Business Representative on Site</td>
+                        <td style="border: 1px solid black;" colspan = "4" >{!Job__c.Mechanical_Installer__c}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >"Co-operation between the project team on site and co-ordination of their work"</td>
+                        <td style="border: 1px solid black;" colspan = "4" >Engineer onsite assumes overall responsibility for site. Responsible for induction of all members of the project team on site</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Handling design changes during the project</td>
+                        <td colspan = "4" style="border: 1px solid black; padding-left:2px; margin-right:2px;padding-bottom:1px;" > 
+                            <apex:outputpanel rendered = "{!aspList.size>0}">
+                                ASP Process :
+                                <table style = "width:99%;border-collapse: collapse;">
+                                    <tr>
+                                        <td style="border: 1px solid black;" >ASP Number</td>
+                                        <td style="border: 1px solid black;" >Function</td>
+                                        <td style="border: 1px solid black;" >Definition</td>
+                                        <td style="border: 1px solid black;" >Reason</td>
+                                        <!--<td style="border: 1px solid black;" >Notes</td>-->
+                                    </tr>
+                                    <apex:repeat value="{!aspList}" var="a">
+                                        <tr>
+                                            <td style="border: 1px solid black;" >
+                                            {!a.Name}
+                                            </td>
+                                            <td style="border: 1px solid black;" >
+                                            {!a.Function__c}
+                                            </td>
+                                            <td style="border: 1px solid black;" >
+                                            {!a.Definition__c}
+                                            </td>
+                                            <td style="border: 1px solid black;" >
+                                            {!a.Picklist__c}
+                                            </td>
+                                            <!--<td style="border: 1px solid black;" >
+                                            {!a.Description__c}
+                                            </td>-->
+                                        </tr>
+                                    </apex:repeat>
+                                </table>
+                            </apex:outputpanel>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >The exchange of health and safety information between contractors</td>
+                        <td style="border: 1px solid black;" colspan = "4" >Contractors have access to Salesforce Site induction completed by engineer on site upon arrival</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Welfare facilities and first aid</td>
+                        <td style="border: 1px solid black;" colspan = "4" >Agreed with customer to have access to toilet and washing facilities Engineers have first aid kits supplied and stocked. Checked during Line Manager HSE Visit </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Reporting and investigation of accidents and incidents including near misses</td>
+                        <td style="border: 1px solid black;" colspan = "4" >
+                            In the event of an emergency
+                            <ul>
+                                <li>contact 999</li>
+                                <li>Inform line manager</li>
+                                <li> Log event via 1313 (internal) ext-</li>
+                            </ul>  
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Fire and emergency procedures.</td>
+                        <td style="border: 1px solid black;"  colspan = "4" >Risk Assessment UKI01 -  THE INSTALLATION, DECOMMISSIONING OF A CENTRAL HEATING SYSTEM AND COMPONENTS</td>
+                    </tr>
+                    
+            </table>
+            
+        
+        </div>
+        
+        <div style="page-break-before:always;">
+           <table style = "border-collapse: collapse;" >
+               <tr>
+                        <th rowspan="13" style="border: 1px solid black;text-align:center;">Organise</th>
+                        <th style="border: 1px solid black;" colspan="5" >What measures are in place for:</th>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Delivery and removal of materials and work Equipment, taking account of any risks to the public /client staff and operations (for example during access to or egress from the site)</td>
+                        <td style="border: 1px solid black;" rowspan="12" colspan = "4"  >
+                            
+                            <p>Risk Assessment UKI01 -  THE INSTALLATION, DECOMMISSIONING OF A CENTRAL HEATING SYSTEM AND COMPONENTS Contractor and Supplier Controls Standard</p>
+                            <ul>
+                                <li>Appendix 4(c) - General HSE Standards for CAT 2 Contractors</li>
+                                <li>Appendix 5(c) - Safe Electrical Working Requirements for CAT 2 Contractors</li>
+                                <li>Appendix 6(c) - Safe Gas Working Requirements for CAT 2 Contractors</li>
+                                <li>Appendix 7(c) - Tower and Fixed Scaffold Requirements"  </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Storage of materials (particularly hazardous materials) and work equipment</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Working at Height (preventing falls)</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Dealing with services – water, electricity and gas, including overhead powerlines and temporary electrical installations</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;" >Electrical Contact,e,g stray currents in appliance and surrounding surfaces </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">The removal of asbestos</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Manual handling</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Reducing noise and/or vibration</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Use of hazardous substances, particularly where there is a need for health monitoring</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Removal of materials  (waste)</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Potential disturbance of ecology e.g. bats</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Storage of chemicals</td>
+                    </tr>
+           </table>
+           <p>Generated by: {!$user.FirstName} {!$user.LastName} on : <apex:outputText value="{0, date,d MMMM yyyy HH:mm a}">
+                        <apex:param value="{!now()}" /> 
+                    </apex:outputText> </p>
+        </div>
+        
+        <div style="page-break-before:always;">
+            <h3>Work Elements</h3>
+            <table style = "border-collapse: collapse;" >
+               <tr width = "100%">
+                   <th width = "100px" style="text-align:center;border: 1px solid black;">Work Code</th>
+                   <th width = "100px" style="text-align:center;border: 1px solid black;">Pack</th>
+                   <th width = "400px" style="text-align:center;border: 1px solid black;">Description</th>
+                   <th width = "100px" style="text-align:center;border: 1px solid black;">Skill</th>
+               </tr>
+           </table>
+           <apex:repeat value="{!Job__c.Job_Elements1__r}" var="je">
+                <apex:outputpanel rendered="{!AND(je.Type__c == 'Work',je.Status__c =='Active')}">
+                     <table style = "border-collapse: collapse;" >  
+                         <tr width = "100%">
+                             <td width = "100px" style="border: 1px solid black;">{!je.code__c}</td>
+                             <td width = "100px" style="border: 1px solid black;">{!je.Product_id__c }</td>
+                             <td width = "400px" style="border: 1px solid black;">{!je.Description__c}</td>
+                             <td width = "100px" style="border: 1px solid black;">{!je.Skill__c}</td>
+                         </tr>
+                     </tabLe>
+                 </apex:outputpanel>
+             </apex:repeat>  
+               <!--</apex:dataTable>-->
+           
+        </div>
+    </body>
+</html>
+
+</apex:page>

@@ -1,0 +1,59 @@
+<apex:page id="Registration" showHeader="false" controller="SIPDSiteRegisterController" cache="false">
+<apex:stylesheet value="{!$Resource.BritishGasStyle}"/>
+<style>
+ .pbHeader {
+        height:100%;
+        font-weight:bold;
+        font-size:15px;
+    }
+</style>
+<div class="page" align="center" style="width:100%;height:100%;padding:1% 1% 1% 0%">
+<div class="wrapper" style="width:70%;height:70%;padding:1% 1% 1% 0%">
+<apex:pageMessages />
+
+<apex:form >
+      
+      <apex:pageBlock title="New User Registration" rendered="{!!isshowMessage}">
+          <div style="height:100%;font-size:14px;padding:1% 1% 1% 10%">
+          <apex:pageBlockSection columns="1">
+              <apex:inputField value="{!supportQueryuser.First_Name__c}" required="true" style="width:250px;"/>
+              <apex:inputField value="{!supportQueryuser.Last_Name__c}" required="true" style="width:250px;"/>
+              <apex:pageBlockSectionItem >
+               <apex:outputText value="Pay Number"/>
+               <apex:inputField value="{!supportQueryuser.Employee_Number__c}" required="true" style="width:250px;"/>   
+              </apex:pageBlockSectionItem>
+              <apex:inputField value="{!supportQueryuser.Email__c}" required="true" style="width:250px;"/>
+              <apex:pageBlockSectionItem >
+               <apex:outputText value="Mobile Number"/>
+               <apex:inputField value="{!supportQueryuser.Contact_Phone_Number__c}" required="true" style="width:250px;"/>
+              </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+          </div>
+          <apex:pageBlockButtons location="bottom" style="font-size:15px;">
+             <apex:commandButton value="Register" action="{!RegisterUser}"/>
+          </apex:pageBlockButtons>
+      </apex:pageBlock>
+      <apex:pageBlock title="New User Details" rendered="{!isshowMessage}">
+          <div style="height:100%;font-size:14px;padding:1% 1% 1% 10%">
+          <apex:pageBlockSection columns="1">
+              <apex:outputfield value="{!supportQueryuser.First_Name__c}" />
+              <apex:outputfield value="{!supportQueryuser.Last_Name__c}" />
+              <apex:pageBlockSectionItem >
+               <apex:outputText value="Pay Number"/>
+               <apex:outputfield value="{!supportQueryuser.Employee_Number__c}" />   
+              </apex:pageBlockSectionItem>
+              <apex:outputfield value="{!supportQueryuser.Email__c}" />
+              <apex:pageBlockSectionItem >
+               <apex:outputText value="Mobile Number"/>
+               <apex:outputfield value="{!supportQueryuser.Contact_Phone_Number__c}" />
+              </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+          </div>
+      </apex:pageblock>
+      <div align="center">     
+        <apex:commandButton value="New I need Help" action="{!newQueryPage}" rendered="{!isshowMessage}" style="font-size:15px;"/>
+      </div>
+  </apex:form>
+</div>
+</div>
+</apex:page>

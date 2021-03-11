@@ -1,0 +1,653 @@
+<apex:page standardController="cscfga__Product_Basket__c" extensions="CS_InstallationNotesController" renderAs="pdf"
+    showHeader="false" standardStylesheets="false" applyHtmlTag="false" sidebar="false" contentType="html"
+    action="{!deleteTempAttachment}">
+    <html>
+
+    <head>
+        <title>Installation notes BG</title>
+        <style>
+            .bg-logo-box {
+                background-image: url("{!URLFOR($Resource.quoteOnlinePageRes, 'BG_logo_s.resource')}");
+                background-repeat: no-repeat;
+                background-position: right top;
+                background-size: 100px 100px;
+            }
+
+            .sg-logo-box {
+                background-image: url("{!URLFOR($Resource.quoteOnlinePageRes, 'SG_logo_s.resource')}");
+                background-repeat: no-repeat;
+                background-position: right top;
+                background-size: 100px 100px;
+            }
+
+            @page {
+                size: A4;
+                margin-top: 5mm;
+                margin-bottom: 15mm;
+                margin-left: 10mm;
+                margin-right: 10mm;
+                font-size: 70%;
+
+
+                @bottom-right {
+                    font-family: sans-serif;
+                    font-size: 60%;
+                    width: 100px;
+                    content: "Page "counter(page) " of "counter(pages);
+                }
+
+                @bottom-left {
+                    content: element(footer);
+                }
+            }
+
+            .page-break {
+                visibility: hidden;
+                display: block;
+                page-break-after: always;
+            }
+
+            body {
+                font-size: 80%;
+                font-family: sans-serif;
+            }
+
+            /*---Brand colours for fonts ---*/
+            .darkBlue {
+                color: #0072bc
+            }
+
+            .midBlue {
+                color: #00baf2
+            }
+
+            .lightBlue {
+                color: #b9e5fb;
+            }
+
+            .pink {
+                color: #ec008c
+            }
+
+            .slate {
+                color: #333F48;
+            }
+
+            /*---Brand colours for element backgrounds---*/
+            .bg-darkBlue {
+                background-color: #0072bc
+            }
+
+            .bg-midBlue {
+                background-color: #00baf2
+            }
+
+            .bg-lightBlue {
+                background-color: #b9e5fb
+            }
+
+            .bg-green {
+                background-color: #bed62f
+            }
+
+            .clearfix:after {
+                content: " ";
+                visibility: hidden;
+                display: block;
+                height: 0;
+                clear: both;
+            }
+
+
+            /*--Tags and classes using bold font--*/
+            h1,
+            h2,
+            h3 {
+                font-family: sans-serif;
+                color: rgb(0, 169, 224);
+                font-weight: normal;
+            }
+
+            h2,
+            h3 {
+                font-family: sans-serif;
+                padding-bottom: 0px;
+                margin-bottom: 0px;
+            }
+
+
+            .bold {
+                font-family: sans-serif;
+                font-weight: bold;
+            }
+
+            .body {
+                margin-top: 1em
+            }
+
+            .smaller {
+                font-size: smaller;
+            }
+
+            .asbestosIdentified {
+                color: red;
+                font-weight: bold;
+                margin-bottom: 0.5em
+            }
+
+            .warning {
+                border: solid 1px red;
+                padding: 0.5em;
+                border-radius: 8px;
+                color: red;
+                display: inline-block
+            }
+
+            .warning p {
+                margin: 0.2em;
+            }
+
+            span.noAsbestos {
+                color: green
+            }
+
+            page {
+                background: #FFF;
+                display: block;
+                margin: 0 auto;
+                page-break-inside: avoid;
+                position: relative;
+                width: 21cm;
+                height: 29.7cm;
+                border-bottom: 1px solid grey;
+            }
+
+            .table {
+                display: table;
+                width: 100%;
+            }
+
+            .row {
+                display: table-row;
+                height: 70px;
+                width: 100%;
+            }
+
+            .cell {
+                display: table-cell;
+                border: 1px solid #FFFFFF;
+                padding: 10px;
+            }
+
+            .cell-dark {
+                background-color: #B0E2EC;
+            }
+
+            .cell-light {
+                background-color: #D6F1F5;
+            }
+
+            .cell-left {
+                width: 30%;
+                display: inline-block;
+            }
+
+            .cell-right {
+                width: 69%;
+                display: inline-block;
+            }
+
+            input[type=text],
+            textarea {
+                -webkit-appearance: none;
+                -webkit-border-radius: 0;
+                font-family: 'BGFlame';
+                font-size: 15px;
+                padding: 3px;
+                border-radius: 0;
+                border-style: none;
+            }
+
+            input[type=text] {
+                height: 25px;
+                box-sizing: border-box;
+                width: 100%;
+            }
+
+            textarea {
+                width: 100%;
+            }
+
+          .footer {
+                position: running(footer);
+                font-size: smaller;
+            }
+            
+            .inlineDivs {
+                width: 30%;
+            }
+
+            .moreSpace {
+                margin-top: 10px;
+                margin-bottom: 5px;
+            }
+
+            .mediumDiv {
+                margin-top: 5px;
+                margin-bottom: 5px;
+            }
+
+            .bigDiv {
+                font-family: 'BGFlame';
+                font-size: 14px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            .bgLogo {
+                float: right;
+            }
+
+            .smallWidth {
+                width: 30%;
+            }
+
+            .mediumWidth {
+                width: 50%;
+            }
+
+
+
+            .simpleTable tr:nth-child(odd) {
+                border-collapse: collapse;
+                font-size: 13px;
+                background-color: #b9e5fb;
+                width: 90%;
+                margin-top: 2px;
+                margin-bottom: 2px;
+                text-align: left;
+            }
+
+            .simpleTable tr:nth-child(even) {
+                font-size: 13px;
+                background-color: white;
+            }
+
+            .radiatorTable {
+                font-size: 13px;
+                border-collapse: collapse;
+                width: 100%;
+                background-color: #b9e5fb;
+                text-align: left
+            }
+
+            .signatureLeft {
+                float: left;
+                width: 100%;
+            }
+
+            .signatureRight {
+                float: right;
+                width: 100%;
+            }
+
+            .signatureCenter {
+                width: 100%;
+                margin-left: 6px;
+            }
+
+
+            .radiatorTable tr:nth-child(even) {
+                background-color: white;
+            }
+
+            .radiatorTable th {
+                font-weight: bold
+            }
+
+            .inlineDisplaySignature {
+                width: 70%;
+                display: inline-block;
+                margin: 2px;
+            }
+
+            #acceptance-box {
+                padding: 0.5em 0.5em 0.5em 0.5em;
+                margin-top: 0rem;
+                background-image: url("{!URLFOR($Resource.quoteOnlinePageRes, 'lightBlueBoxBig2.resource')}");
+                background-repeat: no-repeat;
+                height: 167px;
+            }
+
+            #acceptance-box h3 {
+                margin: 0
+            }
+
+            #acceptance-box p {
+                font-size: 84%
+            }
+
+            .signature-box {
+                border: 1px solid #fff;
+                border-radius: 10px;
+                background-image: url("{!URLFOR($Resource.quoteOnlinePageRes, 'whiteBoxSmall2.resource')}");
+                background-repeat: no-repeat;
+                height: 50px;
+                padding: 2px;
+                background-size: 230px 50px;
+            }
+
+
+            .signature-box {
+                /*background-color: #fff;
+                    border: 1px solid #fff;
+                    border-radius: 10px;
+                    -webkit-border-radius:10px;
+                    -moz-border-radius:5px;*/
+                background-image: url("{!URLFOR($Resource.quoteOnlinePageRes, 'whiteBoxSmall2.resource')}");
+                background-repeat: no-repeat;
+                height: 50px;
+                padding: 2px;
+                background-size: 230px 50px;
+            }
+
+            .signature-box p {
+                margin: 0;
+                font-family: sans-serif;
+            }
+
+            .newPage {
+                margin-top: 2em;
+                page-break-before: always;
+
+            }
+
+            .contact-table {
+                margin: 1em 0;
+            }
+
+            .align-right {
+                text-align: right
+            }
+
+            .leftRadius {
+                border-bottom-left-radius: 14px;
+            }
+
+            .shadedTable {
+                font-size: 85%;
+            }
+
+            .shadedTable th {
+                font-weight: bold;
+                text-align: left
+            }
+
+            .shadedTable tr:nth-child(odd) {
+                background-color: #eae7e7;
+            }
+
+            .shadedTable tr:nth-child(even) {
+                background-color: white;
+            }
+
+            tr.red {
+                color: red;
+            }
+
+            span.asbestosIdentified {
+                color: red;
+                font-weight: bold;
+                margin-bottom: 0.5em
+            }
+
+            span.warning {
+                border: solid 1px red;
+                padding: 0.5em;
+                border-radius: 8px;
+                color: red;
+                display: inline-block
+            }
+
+            .warning p {
+                margin: 0.2em;
+            }
+
+            .disclaimer {
+                font-size: 80%;
+            }
+
+            .tradingStatement {
+                font-size: 75%;
+                margin: 0.3em 0;
+            }
+
+            .clearfix:after {
+                content: " ";
+                visibility: hidden;
+                display: block;
+                height: 0;
+                clear: both;
+            }
+
+            .flex {
+                display: flex
+            }
+
+            .darkBlue {
+                color: #0072bc
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="FooterText" class='footer'>{!inputNotes.FooterText}</div>
+        <div class="content" style="width: 700px; height: 950px;">
+            <div class='body {!logoCSSClass}'>
+                <div style='position: relative; top: 30mm;'>
+                    <h1>Keep this information for our installation engineer</h1>
+                    <apex:outputpanel rendered="{!inputNotes.productDefinition=='Small Commercial'}">
+                        <h3 style="color:red;">{!inputNotes.productDefinition} </h3>
+                    </apex:outputpanel>
+                    <div class="customerContact">
+                        <span>Customer name: {!inputNotes.customerName}</span> <br></br>
+                        <span>Address: {!inputNotes.customerAddress}</span> <br></br>
+                        <span>Quote reference number: {!inputNotes.quoteReference}</span> <br></br>
+                        <span>Visit date: {!inputNotes.visitDate}</span> <br></br>
+                    </div>
+
+                    <div class="clearfix">
+                        <p>Your Heating Adviser has put together these notes to help our engineer install your heating
+                            solution
+                            in the safest way. Please keep it inside the back of your customer folder, along with your
+                            quote. Our engineer
+                            will ask for it on the day of the installation.
+                        </p> 
+
+                        <p class='bold'>Please make sure that you've read and understood this document and the proposed
+                            work involved
+                            to fulfil your central heating installation quotation. This document contains important
+                            information about the work
+                            we'll do to install your new boiler in your home. Ask your Heating Adviser or engineer if
+                            you have any questions
+                            about what the work will involve. If you proceed with a central heating installation by
+                            British Gas, we'll assume
+                            that you understand and agree to the work to be done, as set out in this document.
+                        </p> 
+                        <!--<p>Your installation reference is: <span id="CHILeadNumber" class='bold'>{!inputNotes.CHILeadNumber}</span></p>-->
+                    </div>
+
+
+                    <apex:outputpanel rendered="{!inputNotes.connectedProductAdded == 'True'}"> 
+                        <h3>Your connected products</h3>
+                        <div style='clearfix'>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <p>Thanks for choosing to install Hive, Boiler IQ or both in your home.
+                                                We'll email you in the next 24 hours to get you started.<br />
+                                                Our email will explain how you can create a digital account, which will
+                                                let you get the most of your new connected
+                                                product(s). It would be great if you could have your digital account up
+                                                and running before your installation engineer
+                                                arrives.<br> </br>
+                                                We'll send our email to <span id="custEmail"
+                                                    class='bold'>{!inputNotes.connectedEmail}</span>
+                                                . If this email address isn't right, please ask your Heating Adviser to
+                                                update it.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </apex:outputpanel>
+
+
+
+                    <h2>Installation engineer - safe working information</h2>
+                    <div id="BoilerDetails">
+                        <apex:outputText value="{!inputNotes.boilerDetailsTable}" escape="false" />
+                    </div>
+                    <div id="Radiator">
+                        <apex:outputText value="{!inputNotes.Radiator}" escape="false" />
+                    </div>
+                    <h3>Asbestos</h3>
+                    <apex:outputpanel rendered="{!inputNotes.AsbestosIdentified == 'Yes'}">
+                        <!--<div id="AsbestosIdentified">
+    				<apex:outputtext value="{!inputNotes.AsbestosIdentified}" escape="false"/></div>-->
+                        <!--<div id="AsbestosNotes"><apex:outputtext value="{!inputNotes.AsbestosNotes}" escape="false"/></div>-->
+                        <!--<p class="smaller">Refer to the customer guide to asbestos left by the advisor</p>-->
+                        <p>Suspect materials have been identified, please refer to the suspect asbestos material record
+                            for
+                            further details.</p>
+                    </apex:outputpanel>
+                    <h3>Electrical safety</h3>
+                    <table class="simpleTable">
+                        <tr>
+                            <td style="background-color: #b9e5fb;">Earth system type</td>
+                            <td style="background-color: #b9e5fb;">{!inputNotes.EarthSystem}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: white;">Visible earth </td>
+                            <td style="background-color: white;">{!inputNotes.VisibleEarth}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #b9e5fb;">Working VOELCB</td>
+                            <td style="background-color: #b9e5fb;">{!inputNotes.Voelcb}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: white;">Customer to arrange</td>
+                            <td style="background-color: white;">{!inputNotes.CustomerArrange}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #b9e5fb;">RCD</td>
+                            <td style="background-color: #b9e5fb;">{!inputNotes.Rdc}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: white;">Socket and see reading</td>
+                            <td style="background-color: white;">{!inputNotes.SocketSee}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #b9e5fb;">Location</td>
+                            <td style="background-color: #b9e5fb;">{!inputNotes.EarthLocation}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: white;">Is protected equipotential bonding (PEB) required?
+                            </td>
+                            <td style="background-color: white;">{!inputNotes.Peb}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #b9e5fb;">Is supplementary equipotential bonding (SEB)
+                                required? </td>
+                            <td style="background-color: #b9e5fb;">{!inputNotes.Seb}</td>
+                        </tr>
+                    </table>
+
+                    <h3>Working at heights</h3>
+                    <p class='bold'>Scaffolding Identified?</p>
+                    <span class="answer" id="Scaffolding">
+                        <apex:outputText value="{!inputNotes.Scaffolding}" escape="false" /></span>
+                    <p class='bold'>Scaffolding/ladder work identified:</p>
+                    <span class="answer" id="LadderWork">
+                        <apex:outputText value="{!inputNotes.LadderWork}" escape="false" /></span>
+
+                    <h3>Access and restricted working</h3>
+
+                    <p class='bold'>Restrictions to work areas or specific access permission required:</p>
+
+                    <span class="answer" id="AccessNotes">
+                        <apex:outputText value="{!inputNotes.AccessNotes}" escape="false" /></span>
+
+                    <p class='bold'>External work areas that may prove potentially hazardous:</p>
+                    <span class="answer" id="WorkAreas">
+                        <apex:outputText value="{!inputNotes.WorkAreas}" escape="false" /></span>
+
+
+                    <h3>Manual handling-heavy/difficult loads/materials</h3>
+
+                    <p class='bold'>Components that may require assistance for removal:</p>
+                    <span class="answer" id="RemovalAssistance">
+                        <apex:outputText value="{!inputNotes.RemovalAssistance}" escape="false" /></span>
+
+                    <div class="pageBreak">&nbsp;</div>
+
+                    <h2 class="newPage">Overview of proposed works</h2>
+                    <div id="AllNotes" class="mediumDiv">
+                        <apex:outputText value="{!inputNotes.AllNotes}" escape="false" />
+                    </div>
+
+                    <p class="bold">System characteristics to be aware of:</p>
+                    <span id="SystemCharacter" class="answer">
+                        <apex:outputText value="{!inputNotes.SystemCharacter}" escape="false" /></span>
+
+                    <!--<div id="FooterText" class='footer'>{!inputNotes.FooterText}</div>-->
+                    <apex:outputpanel rendered="{!inputNotes.AsbestosIdentified == 'Yes'}">
+                        <div class="pageBreak">&nbsp;</div>
+
+                        <h2 class="newPage">Suspected asbestos material record</h2><br></br>
+                        <div class="customerContact">
+                                <span>Customer name:{!inputNotes.customerName}</span> <br></br>
+                                <span>Address: {!inputNotes.customerAddress}</span> <br></br>
+                                <span>Quote reference number: {!inputNotes.quoteReference}</span> <br></br>
+                                <span>Visit date: {!inputNotes.visitDate}</span> <br></br>
+                            </div>
+                        <div>
+                            <p>
+                                Your Heating Adviser found material in your property that may contain asbestos. If necessary, 
+                                we'll take a sample and send it for scientific analysis to confirm if asbestos is present. The 
+                                results of that analysis will help us find out what work we need to do to keep you safe and 
+                                and to comply with health and safety regulations.<br></br>
+                                Please refer to the <span class="bold">Customer Guide to Asbestos</span> given to you by your 
+                                Heating Adviser for further information.
+                            </p>
+
+    
+
+                            <h3>Here's a record of any suspected asbestos materials your Heating Adviser found </h3>
+                            <div>
+                                <apex:outputtext value="{!inputNotes.suspectMaterials}" escape="false" />
+                                <apex:outputpanel rendered="{!inputNotes.asbestosSample == 'Yes'}">
+                                    <div id="asbestosSampleText">
+                                        <p>
+                                            One or more of the suspect material recordings requires further analysis. We
+                                            will arrange analysis of the sample(s) taken, all as part of our service.
+                                            We will notify you of the results, as soon as we receive confirmation of the
+                                            analysis.
+                                            Your heating advisor can then discuss the various options open to you
+                                            dependant on the outcome.
+                                        </p>
+                                    </div>
+                                </apex:outputpanel>
+                            </div>
+                            <!--<div id="FooterText" class='footer'>{!inputNotes.FooterText}</div>-->
+                        </div>
+                    </apex:outputpanel>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    </html>
+
+</apex:page>

@@ -1,0 +1,52 @@
+<apex:page standardController="Response_Request__c"  extensions="SupportQueryResRequestExten" cache="false" showHeader="false">
+<apex:stylesheet value="{!$Resource.BritishGasStyle}"/>
+<style>
+ .pbHeader {
+        height:100%;
+        font-size:15px;
+        font-weight:bold;
+        padding:1% 1% 1% 1%;
+    }
+</style>
+<div class="page" align="center" style="padding:1% 1% 1% 0%">
+<div class="wrapper" style="width:80%;height:100%">
+     <apex:form >
+         <apex:pageblock rendered="{!!isViewRR}" title="Response Request Detail">
+         <div style="height:100%;font-size:13px;padding:1% 1% 1% 1%;">
+         <apex:pageBlockSection columns="1" title="Information" >
+                 <apex:inputField value="{!resRequest.I_need_help__c}"/>
+             </apex:pageBlockSection>
+             <apex:pageBlockSection columns="1" title="Question">
+                 <apex:outputField value="{!resRequest.Question__c}"/>
+             </apex:pageBlockSection>
+             <apex:pageBlockSection columns="1" title="Answer">
+                 <apex:inputField value="{!resRequest.Response__c}"/>
+             </apex:pageBlockSection>
+             <apex:pageBlockButtons style="font-size:15px;padding:1% 1% 1% 1%;">
+             <apex:commandButton value="Save" action="{!save}"/>
+             <apex:commandButton value="Cancel" action="{!cancel}"/>
+             </apex:pageBlockButtons>
+             </div>
+         </apex:pageblock>
+         
+         <apex:pageblock rendered="{!isViewRR}" title="Response Request Details">
+             <div style="height:100%;font-size:13px;padding:1% 1% 1% 1%;">
+             <apex:pageBlockSection columns="2" >
+                 <apex:outputField value="{!resRequest.name}"/>
+                 <apex:outputField value="{!resRequest.I_need_help__c}"/>
+             </apex:pageBlockSection>
+             <apex:pageBlockSection columns="2" title="Question">
+                 <apex:outputField value="{!resRequest.Question__c}"/>
+             </apex:pageBlockSection>
+             <apex:pageBlockSection columns="2" title="Answer">
+                 <apex:outputField value="{!resRequest.Response__c}"/>
+                 <apex:outputField value="{!resRequest.createddate}"/>
+                 <apex:outputField value="{!resRequest.lastmodifieddate}"/>
+                 <apex:outputField value="{!resRequest.Locked__c}"/>
+             </apex:pageBlockSection>
+             </div>
+         </apex:pageblock>
+     </apex:form>
+</div>
+</div>
+</apex:page>

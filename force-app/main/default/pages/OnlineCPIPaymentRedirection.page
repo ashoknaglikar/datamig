@@ -1,0 +1,4 @@
+<!--<apex:page controller="OnlineCPIPaymentAuthorisation" action="{!redirect}" >-->
+<apex:page >
+
+</apex:page>

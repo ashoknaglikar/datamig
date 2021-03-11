@@ -1,0 +1,101 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="true" standardController="Support_Query__c" extensions="supportQueryDetailController" cache="false">
+<apex:stylesheet value="{!$Resource.BritishGasStyle}"/>
+<style>
+ .pbHeader {
+        height:100%;
+        font-weight:bold;
+        font-size:15px;
+        font-family: arial, sans-serif;
+    }
+</style>
+
+
+<body style="width:100%">
+  <div class="page" align="center" style="width:100%;height:100%;padding:1% 1% 1% 0%">
+  <div class="wrapper" style="width:80%;height:80%;padding:1% 1% 1% 0%">
+  <apex:form id="myForm">
+    <apex:pageBlock title="I Need Help  Details" rendered="{!!isEdit}" >
+    <!--<apex:detail subject="{!sqId}" relatedList="true" inlineEdit="true"/>-->
+        <apex:pageBlockSection title="I need help! Detail" columns="2">
+             <apex:repeat value="{!fields}" var="f">
+                  <apex:outputField value="{!supportQuery[f.fieldPath]}"/>
+             </apex:repeat>
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons >
+            <apex:commandButton value="Edit" action="{!EditSQ}" rerender="myForm" rendered="{!supportQuery.Status__c!='Closed'}"/>
+            <!--<apex:commandButton value="Delete" onclick="return confirm('Do you want to proceed?');" action="{!deleteSQ}"/>-->
+            
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    
+    <apex:pageBlock title="I Need Help Details" rendered="{!isEdit}">
+        <apex:pageBlockSection title="I need help! Detail Edit">
+             <apex:repeat value="{!fields}" var="f">
+                  <apex:inputField value="{!supportQuery[f.fieldPath]}"/>
+             </apex:repeat>
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons >
+            <apex:commandButton value="Save" action="{!SaveSQ}" rerender="myForm"/>
+            <apex:commandButton value="Cancel" action="{!cancelSQ}" rerender="myForm"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    
+    <apex:pageBlock >
+           <div style="padding:1% 0% 1% 0%">
+             <apex:outputText value="Response Requests" style="font-size:17px;font-weight:bold;font-family:arial,sans-serif;"/>
+           </div>
+            <div style="padding-bottom:1%">
+           <apex:outputText rendered="{!resRequestList.size<=0}">No records to display.</apex:outputText>
+           <apex:pageBlockTable value="{!resRequestList}" var="res" rendered="{!resRequestList.size>0}">
+               <apex:column headervalue="Action">
+                     <apex:outputLink value="/SupportQueryResponseRequestPage?rrid={!res.id}">Edit</apex:outputLink>
+                     <!--<apex:outputLink onclick="deleteAccount({!res.Id});">Del</apex:outputLink>-->
+                    <!-- <a href="javascript:if (window.confirm('Are you sure?')) deleteAccount('{!res.Id}');" style="font-weight:bold">Del</a>-->
+                    <!--<apex:commandlink value="Del" action="{!deleteResReq}" reRender="myForm">
+                    <apex:param name="rrid" value="{!res.Id}" assignTo="{!delResReq}"/>
+                    </apex:commandlink>-->
+               </apex:column>
+               <apex:column headervalue="Response Ref"><apex:outputLink target="_blank" value="/SupportQueryResponseRequestPage?rrid={!res.id}&isView=true">{!res.Name}</apex:outputLink></apex:column>
+               <apex:column headervalue="Question">{!res.Question__c}</apex:column>
+               <apex:column headervalue="Answer" >{!res.Response__c}</apex:column>
+               <apex:column headervalue="Last Modified Date"><apex:outputField value="{!res.LastModifiedDate}"/></apex:column>
+           </apex:pageBlockTable>
+           </div>
+    </apex:pageBlock>
+    
+   <apex:pageBlock id="pgblk">
+           <div style="padding:1% 0% 1% 0%">
+             <apex:outputText value="Notes & Attachments" style="float:left;font-size:17px;padding-right:30%;font-weight:bold;font-family:arial,sans-serif;"/>
+             <apex:commandButton value="Attach File" action="{!attachFile}" style="display:inline;" />
+           </div>
+           <div style="padding-bottom:1%">
+           <apex:outputText rendered="{!attachList.size<=0}" >No records to display.</apex:outputText>
+           <!--<apex:pageBlockTable value="{!attachList}" var="att" rendered="{!attachList.size>0}" rows="{!setRecords}" first="{!(pageNumber-1)*setRecords}">-->
+           <apex:pageBlockTable value="{!attachList}" var="att" rendered="{!attachList.size>0}">
+               <apex:column headervalue="Action">
+                     <apex:outputLink value="/servlet/servlet.FileDownload?file={!att.id}" target="_blank">view</apex:outputLink>
+               </apex:column>
+               <apex:column headervalue="Type"><apex:outputText value="Attachment"/></apex:column>
+               <apex:column headervalue="Title">{!att.name}</apex:column>
+               <apex:column headervalue="Last Modified" ><apex:outputField value="{!att.LastModifiedDate}"/></apex:column>
+               <apex:column headervalue="Created By"><apex:outputField value="{!att.createdby.name}"/></apex:column>
+           </apex:pageBlockTable>
+           </div>
+           <!--<div align="center" style="position:relative">
+                                <b>                                    
+                                    <apex:commandButton value="|<" action="{!firstPage}" reRender="pgblk" disabled="{!pageNumber<=1}" style="width:3%;" />
+                                    <apex:commandButton value="<" action="{!previousPage}" reRender="pgblk" disabled="{!pageNumber<=1}" style="width:3%;" />
+                                    <apex:commandButton value=">" action="{!nextPage}" reRender="pgblk" disabled="{!pageNumber == pageUpInt}" style="width:3%;" />             
+                                    <apex:commandButton value=">|" action="{!lastPage}" reRender="pgblk" disabled="{!pageNumber == pageUpInt}"   style="width:3%;" />
+                                </b>
+            </div>-->
+    </apex:pageBlock>
+    </apex:form> 
+   
+   <!-- <apex:relatedList subject="{!sqId}" list="CombinedAttachments" />-->
+   
+    </div>
+    </div>  
+  </body>  
+   
+</apex:page>

@@ -1,0 +1,7 @@
+<apex:page >
+
+<apex:pageMessage detail="The 'Job Diary tab' has now been replaced with the 'Installer Diary List View' which has the same functionality but now allows for more information to be seen without size limits." 
+title="The Job Diary tab has now been replaced." 
+escape="true" strength="3" severity="Error" >
+</apex:pageMessage>
+</apex:page>
