@@ -470,40 +470,8 @@ public static List<List<String>> findDistanceBetweenPostcodes(String origin, Str
                   
                   
                   List<String> distanceAndTimeForOne = new List<String>();
-                  string bingBaseUrl='https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?';
-                  String mode='driving';          
                   
-                  //origin and destination should be in lattitude & longitude not in postcodes.
-                  string query = 'origins='+innerOrigin.replaceall(' ', '')+'&destinations='+destination.replaceall(' ', '')+'&travelMode='+mode.replaceall(' ', '');
-                  string finalUrl = bingBaseUrl + query ;
-                  
-                  if(label.trafficSwitch == 'on')
-                  {
-                      DateTime dt = DateTime.newInstance(jobStartDate.year(), jobStartDate.month(), jobStartDate.day(), 08, 0, 0);
-                      string departure_time = dt.format('yyyy-MM-dd HH:mm:ss');
-                      finalUrl+='&startTime='+departure_time.replaceall(' ','+' );
-                  }
-                  string bingKey = system.label.BingAPIKey;
-                  if(userinfo.getUserName().contains('orckid.portal'))
-                  bingKey = system.label.BingAPIKey_PortalUser;
-                  
-                  finalUrl+='&key='+bingKey+'&distanceUnit=mi';
-                  
-                  
-                  system.debug('bing url '+finalURL);
-                  
-                  Http obj_Http = new Http();
-                  HttpRequest http_Req = new HttpRequest();
-                  http_Req.setEndpoint(finalUrl);
-                  http_Req.setMethod('GET');
-                  http_Req.setTimeout(60000);  
-                  string responseBody;
-                  if(!Test.isRunningTest()){
-                  HttpResponse http_Res = obj_Http.send(http_Req);
-                  responseBody = http_Res.getBody();}
-                  else{
-                      responseBody='';
-                  }
+                  string responseBody = getDistanceFromBingMaps(innerOrigin,destination, jobStartDate);
                   system.debug('bing response ' +responseBody);
                   
                   BingTravelResponse responseObj = new BingTravelResponse();
@@ -537,7 +505,46 @@ public static List<List<String>> findDistanceBetweenPostcodes(String origin, Str
     
   return null;
 }
-   
+
+
+  public static string getDistanceFromBingMaps(string innerOrigin, string destination, date jobStartDate )
+  {
+      string bingBaseUrl='https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?';
+        String mode='driving';          
+        
+        //origin and destination should be in lattitude & longitude not in postcodes.
+        string query = 'origins='+innerOrigin.replaceall(' ', '')+'&destinations='+destination.replaceall(' ', '')+'&travelMode='+mode.replaceall(' ', '');
+        string finalUrl = bingBaseUrl + query ;
+        
+        if(label.trafficSwitch == 'on' && jobStartDate!=null)
+        {
+            DateTime dt = DateTime.newInstance(jobStartDate.year(), jobStartDate.month(), jobStartDate.day(), 08, 0, 0);
+            string departure_time = dt.format('yyyy-MM-dd HH:mm:ss');
+            finalUrl+='&startTime='+departure_time.replaceall(' ','+' );
+        }
+        string bingKey = system.label.BingAPIKey;
+        if(userinfo.getUserName().contains('orckid.portal'))
+        bingKey = system.label.BingAPIKey_PortalUser;
+        
+        finalUrl+='&key='+bingKey+'&distanceUnit=mi';
+        
+        
+        system.debug('bing url '+finalURL);
+        
+        Http obj_Http = new Http();
+        HttpRequest http_Req = new HttpRequest();
+        http_Req.setEndpoint(finalUrl);
+        http_Req.setMethod('GET');
+        http_Req.setTimeout(60000);  
+        string responseBody;
+        if(!Test.isRunningTest()){
+        HttpResponse http_Res = obj_Http.send(http_Req);
+        responseBody = http_Res.getBody();}
+        else{
+            responseBody='';
+        }
+        return responseBody;
+  } 
    
    public void setErrorMsg(boolean flag, string message)
     {
