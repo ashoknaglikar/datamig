@@ -22,7 +22,7 @@ public class WorkdayReportHelper{
      Start & End Jobs to cacluate the start to job TT and Job to start TT at the end of the day.
      There will be always 2 job is every element of the map.
   */ 
-  map<date, list<id>> dateJobIdMap = new map<date,list<Id>>();
+  map<date, list<string>> dateJobIdMap = new map<date,list<string>>();
 
 
   public WorkdayReportHelper(){
@@ -139,6 +139,12 @@ public class WorkdayReportHelper{
          JobHoursList.add(JH);
        }
        system.debug(LoggingLevel.INFO,'-=-=-=-=-=-=-=>'+JobHoursList);
+       list<map<string, decimal>> travelTimeInfo = new list<map<string, decimal>>();
+
+       if(dateJobIdMap.size()>0)
+       {
+         travelTimeInfo = calculcateTravelTime(dateJobIdMap, Id_Installer);
+       }
      }else{
         renderReport = false;
         ApexPages.addMessage(new ApexPages.message(ApexPages.severity.Error,'There are no Work day Reports found which match below mentioned criteria. Please check your inputs'));
@@ -204,6 +210,138 @@ public class WorkdayReportHelper{
       Tot_Planned_Hours =0.0;
 
      }
+  }
+
+
+  private list<map<string, decimal>> calculcateTravelTime(map<date,list<string>> dateJobIdMap, id employeeId){
+    list<map<string, decimal>> returnTravelTimeInfo = new list<map<string, decimal>>();
+    list<string> allJobNumbers = new list<string>();
+    set<string> startToJobs = new set<string>();
+    set<string> jobsToStart = new set<string>();
+    for( list<string> jobNumebrs: dateJobIdMap.values())
+    {
+        allJobNumbers.addall(jobNumebrs);
+        startToJobs.add(jobNumebrs[0]);
+        jobsToStart.add(jobNumebrs[1]);
+
+    }
+
+    list<Job__c> allJobs = [select name, Latitude__Latitude__s, Latitude__longitude__s, Install_Postcode__c from Job__c where Name in :allJobNumbers];
+    Employee__c emp = [Select Latitude__Latitude__s, Latitude__Longitude__s,Postcode__c from Employee__c where id  = :employeeId];
+    //sort out the employee latlong if missing
+    boolean updateJob, updateEmp;
+    updateJob=updateEmp = false;
+    if(emp.Latitude__Latitude__s == null && emp.Postcode__c!=null)
+    {
+      list<string> empLatlong = utilities.getLatLang(null, emp.Postcode__c, null, null);
+      emp.Latitude__Latitude__s = decimal.valueof(empLatlong[0]);
+      emp.Latitude__Longitude__s = decimal.valueof(empLatlong[1]);
+      updateEmp = true;
+    }
+
+    string soruceLatlongs , destinationLatlongs;
+    soruceLatlongs = destinationLatlongs = emp.Latitude__Latitude__s+','+emp.Latitude__Longitude__s+';';
+
+    // sort out Job Latlong if missing
+    for(Job__c j: allJobs)
+    {
+      if(j.Latitude__Latitude__s==null && j.Install_Postcode__c !=null)
+      {
+        list<string> jobLatlong = utilities.getLatLang(null, j.Install_PostCode__c, null, null);
+        j.Latitude__Latitude__s = decimal.valueof(jobLatlong[0]);
+        j.Latitude__Longitude__s = decimal.valueof(jobLatlong[1]);
+        updateJob= true;
+      }
+      if(startToJobs.contains(j.Name))
+      destinationLatlongs+=j.Latitude__Latitude__s +','+ j.Latitude__Longitude__s +';';
+
+      if(jobsToStart.contains(j.Name))
+      soruceLatlongs+=j.Latitude__Latitude__s +','+ j.Latitude__Longitude__s +';';
+
+      soruceLatlongs = soruceLatlongs.replaceALL(' ', '').substring(0,soruceLatlongs.length()-1);
+      destinationLatlongs= destinationLatlongs.replaceALL(' ', '').substring(0,destinationLatlongs.length()-1);
+    }
+      string responseBody = utilities.getDistanceFromBingMaps(soruceLatlongs,destinationLatlongs,null);
+
+      BingTravelResponse responseObj = new BingTravelResponse();
+      responseObj = BingTravelResponse.parse(responseBody);
+      List<BingTravelResponse.cls_results> results = new List<BingTravelResponse.cls_results>();
+      if(responseObj.statusCode ==200)
+      {
+        for(BingTravelResponse.cls_resourceSets row : responseObj.resourceSets)
+          {
+              for(BingTravelResponse.cls_resources ele : row.resources)
+              {
+                results = ele.results;
+                 /* for(BingTravelResponse.cls_results result: ele.results)
+                  {
+                      //list <string> distanceForOne = new list<string>{String.valueof(decimal.valueof(result.travelDistance).setscale(1))+' mi', '0', String.valueof(result.travelDuration.intValue())+' mins', string.valueof(result.travelduration*60)};
+                      
+                    
+                  }*/
+              }
+          }
+          map<string, decimal> startToJobTime , jobToStartTime  = new map<string, decimal> ();
+          integer i =1;
+          for(string s: startToJobs)
+          {
+            for(BingTravelResponse.cls_results result: results)
+            {
+              if(result.originIndex == 0 && result.destinationIndex == i){
+                startToJobTime.put(s,decimal.valueof(result.travelDuration));
+                break;
+              }
+            }
+            
+            i++;
+          }
+
+          i = 1;
+
+          for(string s: startToJobs)
+          {
+
+            for(BingTravelResponse.cls_results result: results)
+            {
+              if(result.destinationIndex == 0 && result.originIndex == i ){
+                  jobToStartTime.put(s,decimal.valueof(result.travelDuration));
+                  break;
+                }
+            }
+            i++;
+          }
+          map<date, map<string, decimal>> tempToJobMap , tempToHomeMap = map<date, map<string, decimal>>();
+          for(date d: dateJobIdMap.keyset())
+          {
+            decimal travelToJob, travelToHome = 0;
+            for(string s: dateJobIdMap.get(d))
+            {
+                if(startToJobTime.containskey(s))
+                //tempToJobMap.put.(d,new )
+
+                if(jobToStartTime.containskey(s))
+                travelToHome = jobToStartTime.get(s);
+            }
+
+            
+          }
+      }
+      
+    
+    
+
+    
+
+    try{
+    if(updateEmp) update emp;
+    if(updateJob) update allJobs;
+    } catch(Exception e)
+    {
+      system.debug('Exce[tion while updateing records'+e.getMessage()+'at line number'+e.getLineNumber());
+    }
+    return returnTravelTimeInfo;
+
+
   }
   
   
