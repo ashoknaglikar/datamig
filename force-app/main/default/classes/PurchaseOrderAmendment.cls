@@ -166,6 +166,7 @@ public class PurchaseOrderAmendment {
     public Map<String,List<Job_Element__c>> um_JobElementMap=new Map<String,List<Job_Element__c>>{}; 
     public Map<String,String> udp_SupplierBranchMAP=new Map<String,String>();
     public Map<Id,String> udp_SuppIdNumMap = new Map<Id,String>();
+     public boolean isNDC{get;set;}
     
     public List<PurchaseOrder> getPurchaseOrderList (){
         return this.purchaseOrderList;
@@ -191,7 +192,7 @@ public class PurchaseOrderAmendment {
            
            //change to auto populate supplier
             autoPopulateSupplier = false;
-            
+            isNDC=false;
             // User defined ASP change - Added one condition in below query to exclude user defined products. 
             // Fix for supplier branch number getting flushed out in purchase order amendment - SupplierBranchNum__c field added in this query.
                    
@@ -1542,6 +1543,16 @@ public class PurchaseOrderAmendment {
             return null;
         }
         
+        
+        //Suguna
+        if (m_UnOrderedItem!=null) {
+            for (underOrderedItem unAttendedItem:m_UnOrderedItem){
+                system.debug('Suguna '+unAttendedItem.sSupplierId);
+                if (unAttendedItem.sSupplierId!=null&&unAttendedItem.sSupplierId=='6701'){
+                    isNDC=true;
+                }
+            }
+        }
         
         
         try {
