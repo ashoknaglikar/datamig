@@ -44,13 +44,14 @@ function check2(obj) {
     <apex:pagemessages />
     <apex:form title="Orders for Job: {!Job__c.Name}">
         <apex:pageblock >
+            <!-- Start of After Confirmation -->
             
-            <apex:outputPanel >
+             <apex:outputPanel rendered="{!(isNDC&&blConfirm)}">
                 <div>
-                    <p>You have selected NDC as supplier are you sure ??</p>
+                 <apex:pageMessage severity="warning" summary="You have selected NDC as supplier are you sure ??" strength="1"></apex:pageMessage>
                 </div>
             </apex:outputPanel>
-            <!-- Start of After Confirmation -->
+            
             <apex:pageBlock rendered="{!(blConfirm)}">
                 <apex:pageBlock title="Itinerary without Supplier Information" >
                     <apex:pageblocktable value="{!im_noPriceInformation}" var="unOrder">
@@ -94,6 +95,9 @@ function check2(obj) {
             <!-- End of After Confirmation block -->
             <!-- Start of before confirmation block -->
             <apex:pageBlock rendered="{!NOT(blConfirm)}">
+                
+           
+            
                 <apex:pageBlock title="Itinerary awaiting Supplier" >
                     <apex:pageblocktable value="{!im_UnOrderedItem}" var="unOrder">
                         <apex:column headerValue="Item Code">
