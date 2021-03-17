@@ -1543,6 +1543,20 @@ public class PurchaseOrderAmendment {
         }
         
         
+<<<<<<< Updated upstream
+=======
+        //Suguna
+        isNDC= false;
+        if (m_UnOrderedItem!=null) {
+            for (underOrderedItem unAttendedItem:m_UnOrderedItem){
+                system.debug('Suguna '+unAttendedItem.sSupplierId);
+                if (unAttendedItem.sSupplierId!=null&&unAttendedItem.sSupplierId==system.label.SupplierNumber_NDC){
+                    isNDC=true;
+                }
+            }
+        }
+        
+>>>>>>> Stashed changes
         
         try {
             // CR User defined ASP Starts

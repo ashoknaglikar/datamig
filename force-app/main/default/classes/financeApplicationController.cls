@@ -220,7 +220,7 @@ public class financeApplicationController {
         financeProducts.add(new SelectOption('','-- None --'));
         
         // get active parent Products. 
-        for(Finance_Product__c f: [SELECT Name, Id, Interest_Rate__c, Payment_Options__c, Selling_Type__c, Promotional_period__c, Not_Available_For__c FROM Finance_Product__c where Active__c = true and Selectable__c = true])
+        for(Finance_Product__c f: [SELECT Name, Id, Interest_Rate__c, Payment_Options__c, Selling_Type__c, Promotional_period__c, Not_Available_For__c FROM Finance_Product__c where Active__c = true and (Selectable__c = true OR salesforce__c=true)])
         {
             if(opp!=null && f.Not_Available_For__c!= null &&  f.Not_Available_For__c.contains(opp.Product_Interest__c))
             {

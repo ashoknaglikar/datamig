@@ -61,13 +61,6 @@
                     // deserialization of incoming json in class type
                     CustomerPortalFinance result=   (CustomerPortalFinance) JSON.deserialize(jsonAfterDecryption, CustomerPortalFinance.class);
                     system.debug('='+result);
-                    
-                    if(result.financeAmount<Decimal.valueof(system.label.Stop_Finance_Amount))
-                    {
-                        responseJSON.errorMessage.add('Finance application can not be submitted for finance amount < £'+system.label.Stop_Finance_Amount+'.');
-                        responseJSON.status = 'Error';
-                        return responseJSON;
-                    }
                     //assigning the incoming finanace application in Finance_Application__c object 
                     customerPortal.Deposit__c = result.depositAmount;
                     customerPortal.Cash_Price__c = result.financeAmount;

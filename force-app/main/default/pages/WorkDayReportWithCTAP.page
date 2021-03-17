@@ -205,7 +205,7 @@
                 </tr>
               </table>
              </td>
-             <td bgcolor="{!IF(w.Workdayrep.Total_Travel_Time__c>0,'white','')}"><apex:outputText value="{!w.Workdayrep.Total_Travel_Time__c}"/></td>
+             <td bgcolor="{!IF(w.Workdayrep.Total_Travel_Time__c>0,'white','')}"><apex:outputText value="{!w.Workdayrep.Travel_Time_in_Minutes__c}"/></td>
              <td bgcolor="white" >
                 <table width="100%" >
                 <tr >
