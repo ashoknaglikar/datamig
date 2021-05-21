@@ -249,18 +249,22 @@ public class WorkflowHelper
            if((cSwap.S_S_CC1__c == null || cSwap.New_Horizontal_flue_installed_to_current__c == null || cSwap.S_S_C12__c == null ||cSwap.Horizontal_flue_extensions_required__c == null || cSwap.Are_any_flue_bends_required__c==null || cSwap.Is_a_Plume_Kit_Required__c==null || cSwap.Is_a_balanced_flue_brick_up_required__c==null || cSwap.S_S_C13__c==null || cSwap.What_fuel_type_is_the_boiler__c==null || cSwap.Is_a_fused_spur_fitted__c==null
              || cSwap.S_S_C15__c==null ||cSwap.S_S_C16__c==null ||cSwap.Already_has_magnetic_filter__c==null || cSwap.Already_have_a_scale_reducer__c==null || /*cSwap.S_S_Q14__c==null || cSwap.S_S_TC9__c==null || cSwap.S_S_Q15__c==null || */ cSwap.Type__c != 'Combi')){
                system.debug('---Inside Validation--');
-               info = SetError(info,'Please fill All the Straight Swap combi Questions or You have tried to complete the wrong questions for the product interest you have chosen. If you have chosen product interest of ‘Straight Swap’ please choose ‘Combi’ questions. If the product interest is ‘Telesales Conv’ then please choose ‘Conv’ straight swaps questions.');
+               info = SetError(info,'Please fill All the Straight Swap combi Questions or You have tried to complete the wrong questions for the product interest you have chosen. If you have chosen product interest of ‘Straight Swap’ please choose ‘Combi’ questions. If the product interest is ‘Telesales Conv’ then please choose ‘Conv’ straight swaps questions. If the product interest is ‘Straight Swap - Direct’ then please choose ‘Straight Swap - Direct’ questions.');
            }
        }
-        system.debug(lstOpp);
        if((lstOpp.get(0).Product_Interest__c.contains('Telesales Conv') ||  lstOpp.get(0).Product_Interest__c == 'Telesales Conv e-quote') && cSwap!= null){
         if((cSwap.C_S_C1__c==null ||cSwap.Is_the_current_boiler_18KW_or_less__c==null || cSwap.C_S_C2__c==null || cSwap.Horizontal_flue_be_installed_to__c==null || cSwap.C_S_C3__c==null ||  cSwap.Is_a_top_or_rear_flue_required__c==null
          || cSwap.Any_horizontal_flue_extensions_required__c==null || cSwap.Are_any_flue_bend_required__c==null || cSwap.Is_a_Plume_Kit_Requiredd__c==null || cSwap.Is_balanced_flue_brick_up_required__c==null || cSwap.C_S_C4__c==null ||
         cSwap.C_S_C5__c==null||cSwap.Is_a_fused_spurr_fitted__c==null||cSwap.C_S_C6__c==null || cSwap.Is_there_a_visiblee_main_earth__c==null || cSwap.C_S_C7__c==null || cSwap.Is_a_powerflushh_required__c==null || cSwap.Type__c != 'Conv')){
            system.debug('---Inside Validation--');
-           info = SetError(info,'Please fill All the Straight Swap Conventional Questions or You have tried to complete the wrong questions for the product interest you have chosen. If you have chosen product interest of ‘Straight Swap’ please choose ‘Combi’ questions. If the product interest is ‘Telesales Conv’ then please choose ‘Conv’ straight swaps questions.');
+           info = SetError(info,'Please fill All the Straight Swap Conventional Questions or You have tried to complete the wrong questions for the product interest you have chosen. If you have chosen product interest of ‘Straight Swap’ please choose ‘Combi’ questions. If the product interest is ‘Telesales Conv’ then please choose ‘Conv’ straight swaps questions. If the product interest is ‘Straight Swap - Direct’ then please choose ‘Straight Swap - Direct’ questions.');
         }
        }
+       if(lstOpp.get(0).Product_Interest__c.contains('Straight Swap - Direct') && cSwap!= null){
+        if(cSwap.Is_your_current_Boiler_a_Combi__c==null ||cSwap.S_S_TC5__c==null || cSwap.Boiler_Location__c==null || cSwap.Question_5__c==null || cSwap.How_many_radiators_in_property__c==null ||  cSwap.Are_you_happy_with_how_current_boiler_me__c==null)
+           info = SetError(info,'Please fill All the Straight Swap - Direct Questions or You have tried to complete the wrong questions for the product interest you have chosen. If you have chosen product interest of ‘Straight Swap’ please choose ‘Combi’ questions. If the product interest is ‘Telesales Conv’ then please choose ‘Conv’ straight swaps questions. If the product interest is ‘Straight Swap - Direct’ then please choose ‘Straight Swap - Direct’ questions.');
+        }
+       
        return info;
     }
     
@@ -450,7 +454,7 @@ public class WorkflowHelper
             System.debug('--------------- validatecontact info.IsError 7= '+ info.IsError);
             
             if(o.bundle_product__c!=null)
-                o.Product_Interest__c=[select id,name,Bundle_Name__c from Bundle__c where id=:o.bundle_product__c].Bundle_Name__c;
+                o.Product_Interest__c=[select id,name,Bundle_Name__c from Bundle__c where id=:o.bundle_product__c and EICR__c=true].Bundle_Name__c;
                 
             if(o.Product_Interest__c == null){
                 info = SetError(info, msgConstants.ERR_ENTERPRODUCTINTEREST);
@@ -990,7 +994,7 @@ public class WorkflowHelper
                 }*/
                 
                 //Added By Ashok G
-                if(cSwap!= null && (cSwap.Is_a_fused_spur_fitted__c != null || cSwap.Is_the_current_boiler_18KW_or_less__c != null )) //&& (cSwap.S_S_Q1__c!=null || cSwap.S_S_C1__c!=null)
+                if(cSwap!= null && (cSwap.Is_a_fused_spur_fitted__c != null || cSwap.Is_the_current_boiler_18KW_or_less__c != null || lstOpp[0].Product_Interest__c=='Straight Swap - Direct' )) //&& (cSwap.S_S_Q1__c!=null || cSwap.S_S_C1__c!=null)
                 {
                   system.debug(LoggingLevel.INFO, 'Entered cswap kp');
                   system.debug(LoggingLevel.INFO, 'cSwap.Opportunity__c+lstOpp[0].Id '+cSwap.Opportunity__c+lstOpp[0].Id);
@@ -1417,8 +1421,8 @@ public class WorkflowHelper
                             bigMachineQuote.Pricebook_Id__c = 'CHB';
                             bigMachineQuote.Product_Type_ID__c = 'CHB';
                             bigMachineQuote.createdDate_quote__c = system.today();
-                            bigMachineQuote.App_Assigned_To__c = 'Online Boilers - 002a';
-                            bigMachineQuote.preparedBy_Quote__c = 'Online Boilers - 002a';
+                            bigMachineQuote.App_Assigned_To__c = 'EICR Boilers - 002a';
+                            bigMachineQuote.preparedBy_Quote__c = 'EICR Boilers - 002a';
                             bigMachineQuote.Opportunity__c = opp.id;
                             bigMachineQuote.stage__c = 'Quote Finalised - Accepted';
                             bigMachineQuote.bmStatusReason__c = 'EICR';

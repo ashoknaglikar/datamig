@@ -62,51 +62,53 @@ System.debug('Entered AccountBeforeInsertUpdateTrigger');
     }
                 
     System.debug('Number of non-duplicate postcode sectors : '+postcodeSectorAccounts.size());
-                                
-    Postcode_Sector__c[] postCodeSectorInfo = [Select p.ID,p.Name,p.Water_Hardness__c,p.Sub_Patch__c,p.Patch_ID__c,Region_Code__c,Trading_Name__c,Country__c
-                                                   From Postcode_Sector__c p where Name IN :postcodeSectorAccounts and type__c = :visitType];      
-    
-    for(Account newAccount : allAccounts) {
-    
-       for(Postcode_Sector__c postCodeSector : postCodeSectorInfo ) {
+    if(postcodeSectorAccounts.size()>0)  
+    {
+        Postcode_Sector__c[] postCodeSectorInfo = [Select p.ID,p.Name,p.Water_Hardness__c,p.Sub_Patch__c,p.Patch_ID__c,Region_Code__c,Trading_Name__c,Country__c
+                                                       From Postcode_Sector__c p where Name IN :postcodeSectorAccounts and type__c = :visitType];      
+        
+        for(Account newAccount : allAccounts) {
+        
+           for(Postcode_Sector__c postCodeSector : postCodeSectorInfo ) {
+                        
+               if( newAccount.BillingPostalCode != null && postCodeSector.Name == newAccount.BillingPostalCode.substring(0,newAccount.BillingPostalCode.length()-2) ) {
                     
-           if( newAccount.BillingPostalCode != null && postCodeSector.Name == newAccount.BillingPostalCode.substring(0,newAccount.BillingPostalCode.length()-2) ) {
-                
-               
-               newAccount.Water_Hardness__c = postCodeSector.Water_Hardness__c;
-               newAccount.Patch_ID__c = postCodeSector.Region_Code__c;
-               
-               if( postCodeSector.Sub_Patch__c != null ){
-                
-                newAccount.Sales_Subpatch__c = postCodeSector.Sub_Patch__c;
-               }
-               newAccount.Country__c = postCodeSector.Country__c;
-                system.debug('@@for');
-                 system.debug('@@pcs id'+postCodeSector.id);
-                 system.debug('@@pcs name'+postCodeSector.name);
-               if( postCodeSector.Trading_Name__c != null ){
-                
-                newAccount.Trade_Name_Text__c = postCodeSector.Trading_Name__c;
-                 system.debug('@@newAccount.Trade_Name_Text__c'+newAccount.Trade_Name_Text__c);
-               }
-           
-               isMatchFound = true;
-           
-            }
-       
-       }
-        
-         if(isMatchFound == false) {
-        
-              newAccount.Water_Hardness__c = 0;
-              newAccount.Patch_ID__c = '';
                    
-          }else {
-          
-              isMatchFound = false;
-          
-          }
-     
+                   newAccount.Water_Hardness__c = postCodeSector.Water_Hardness__c;
+                   newAccount.Patch_ID__c = postCodeSector.Region_Code__c;
+                   
+                   if( postCodeSector.Sub_Patch__c != null ){
+                    
+                    newAccount.Sales_Subpatch__c = postCodeSector.Sub_Patch__c;
+                   }
+                   newAccount.Country__c = postCodeSector.Country__c;
+                    system.debug('@@for');
+                     system.debug('@@pcs id'+postCodeSector.id);
+                     system.debug('@@pcs name'+postCodeSector.name);
+                   if( postCodeSector.Trading_Name__c != null ){
+                    
+                    newAccount.Trade_Name_Text__c = postCodeSector.Trading_Name__c;
+                     system.debug('@@newAccount.Trade_Name_Text__c'+newAccount.Trade_Name_Text__c);
+                   }
+               
+                   isMatchFound = true;
+               
+                }
+           
+           }
+            
+             if(isMatchFound == false) {
+            
+                  newAccount.Water_Hardness__c = 0;
+                  newAccount.Patch_ID__c = '';
+                       
+              }else {
+              
+                  isMatchFound = false;
+              
+              }
+         
+        }
     }
        
     System.debug('Exiting AccountBeforeInsertUpdateTrigger');

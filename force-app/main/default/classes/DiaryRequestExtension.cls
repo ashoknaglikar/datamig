@@ -190,7 +190,7 @@ public with sharing class DiaryRequestExtension
         }
         
         public void cloneObjects(){
-             deReq = [SELECT Employee__c,RecordTypeId,Appointment_Types__c,District__c,Employee_Group__c,EndDT__c,StartDT__c,Start__c,End__c,No_Of_Weeks__c,Week_1__c, Week_2__c, Week_3__c, Week_4__c,product_interest__c,
+             deReq = [SELECT Employee__c,RecordTypeId,Appointment_Types__c,District__c,Employee_Group__c,EndDT__c,StartDT__c,Start__c,End__c,No_Of_Weeks__c,Week_1__c, Week_2__c, Week_3__c, Week_4__c,product_interest__c,Shift_template__c,
                                                 Unavailability_Notes__c,Unavailability_Reason__c,Subject__c ,Request_Type__c,Status__c,Sub_Status__c, Cycle__c, Team__c FROM Diary_Change__c where id =: diaryChangeIDString];
                 
                 list<Diary_Change_Request__c> weekDetails = [Select d.Mon_AM_RoleWK1__c,d.Mon_PM_RoleWK1__c,d.Tue_AM_RoleWK1__c,d.Tue_PM_RoleWK1__c,d.Week_Number__c,d.Wed_AM_RoleWK1__c,d.Wed_PM_RoleWK1__c, 

@@ -36,7 +36,7 @@ public class sendSurveyDataBatch_Test {
                               Employee_Number__c = '0002991');
         insert emp;
         
-        appointment = new Appointment__c(Type__c='Sales', Start__c =system.now(), Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=system.now().addhours(2), Assigned_To__c=emp.Id);
+        appointment = new Appointment__c(Type__c='Sales', Start__c =system.now(), Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=system.now().addhours(2), Assigned_To__c=emp.Id,skill_number__c=10);
         insert appointment;
         
         

@@ -49,6 +49,7 @@ public class submitBarclaysv3{
 		public cls_employmentDetails employmentDetails;
 		public cls_incomeDetails incomeDetails;
 		public cls_outgoings outgoings;
+		public cls_changeInFutureCircumstances changeInFutureCircumstances;
 	}
 	class cls_identityProof {
 		public String type;	//ENHANCED_DEBIT_OR_CREDIT_CARD
@@ -281,21 +282,44 @@ public class submitBarclaysv3{
 	    cls_incomeDetails  incomeObj = new cls_incomeDetails();
 		incomeObj.grossAnnualIncome = fa.Gross_Income__c;	//35000
 	    appObj.incomeDetails = incomeObj;
+
+		cls_outgoings outgoingObj = new cls_outgoings();
+		//outgoingObj.monthlyRent =   0;
+		outgoingObj.monthlyDependentsCareCosts = 0;
+		
 	    
-	    if(fa.Rent__c != null || fa.Monthly_Expense__c!=null)
+	    if(fa.Rent__c != null /* || fa.Monthly_Expense__c!=null */)
 	    {
-    	    cls_outgoings outgoingObj = new cls_outgoings();
+    	   // cls_outgoings outgoingObj = new cls_outgoings();
     	    outgoingObj.monthlyRent =   fa.Rent__c;
-    	    outgoingObj.monthlyDependentsCareCosts = fa.Monthly_Expense__c;
-    	    appObj.outgoings = outgoingObj;
+    	    //outgoingObj.monthlyDependentsCareCosts = fa.Monthly_Expense__c;
+    	    //appObj.outgoings = outgoingObj;
 	    }
-	    
-	    if(fa.Expense_Variation_Value__c !=null || fa.Income_Variation_value__c!=null)
+		if(/* fa.Rent__c != null  || */ fa.Monthly_Expense__c!=null )
 	    {
-	        cls_changeInFutureCircumstances changeObj= new cls_changeInFutureCircumstances();
+    	   // cls_outgoings outgoingObj = new cls_outgoings();
+    	    //outgoingObj.monthlyRent =   fa.Rent__c;
+    	    outgoingObj.monthlyDependentsCareCosts = fa.Monthly_Expense__c;
+    	    //appObj.outgoings = outgoingObj;
+	    }
+		appObj.outgoings = outgoingObj;
+	    
+		cls_changeInFutureCircumstances changeObj= new cls_changeInFutureCircumstances();
+		changeObj.expectedMonthlyExpenditureIncrease = 0;
+		changeObj.expectedDecreasedAnnualIncome = 0;
+	    if(fa.Expense_Variation_Value__c !=null /* || fa.Income_Variation_value__c!=null */)
+	    {
+	        //cls_changeInFutureCircumstances changeObj= new cls_changeInFutureCircumstances();
 	        changeObj.expectedMonthlyExpenditureIncrease = fa.Expense_Variation_Value__c;
+	        //changeObj.expectedDecreasedAnnualIncome = fa.Income_Variation_value__c;
+	    }
+		if(/* fa.Expense_Variation_Value__c !=null || */ fa.Income_Variation_value__c!=null)
+	    {
+	        //cls_changeInFutureCircumstances changeObj= new cls_changeInFutureCircumstances();
+	        //changeObj.expectedMonthlyExpenditureIncrease = fa.Expense_Variation_Value__c;
 	        changeObj.expectedDecreasedAnnualIncome = fa.Income_Variation_value__c;
 	    }
+		appObj.changeInFutureCircumstances= changeObj;
 	    
 	    
 	    

@@ -108,7 +108,7 @@ private class callHistoryTest {
          datetime AppointmentTime0700am = datetime.newinstance(pageDate.Year(), pageDate.addMonths(1).Month(), pageDate.addDays(1).Day(), 7,0,0);    
          datetime AppointmentTime0900am = datetime.newinstance(pageDate.Year(), pageDate.addMonths(1).Month(), pageDate.addDays(1).Day(), 9,0,0);
          Lock.Lock = True;
-         Appointment__c TestAppointment1 = new Appointment__c(Type__c='Sales', Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime0900am, Assigned_To__c=emp.Id,Opportunity__c =opp2.id,who__c=c2.id);
+         Appointment__c TestAppointment1 = new Appointment__c(Type__c='Sales', Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime0900am, Assigned_To__c=emp.Id,Opportunity__c =opp2.id,who__c=c2.id,skill_number__c=10);
         insert TestAppointment1;
         District__c d = TestclassHelper.createDistrict();
         insert d;

@@ -133,6 +133,7 @@ private class bINSUPD_chkEmpSkillForItnry_test {
         appmnt.End__c = system.today().addDays(1);
         appmnt.Assigned_To__c=emp.id;
         appmnt.Type__c = 'Asbestos Removal';
+        appmnt.skill_number__c=10;
         insert appmnt;
         
        

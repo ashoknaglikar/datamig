@@ -214,11 +214,11 @@ private class TestAvailiabilityP1Controller {
         Role_District__c [] TestRoleDistricts = new Role_District__c[]{TestRoleDistrict1, TestRoleDistrict2, TestRoleDistrict3, TestRoleDistrict4,TestRoleDistrict5,TestRoleDistrict6};
         insert TestRoleDistricts;
          
-        Appointment__c TestAppointment1 = new Appointment__c(Type__c=apptType, Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime0900am, Assigned_To__c=poolEmployee.Id , Status__c = 'Appointed');
-        Appointment__c TestAppointment2 = new Appointment__c(Type__c=apptType, Mode__c = 'SA', Start__c =AppointmentTime0900am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1100am, Assigned_To__c=stmEmployee.Id, Status__c = 'New');
-        Appointment__c TestAppointment3 = new Appointment__c(Type__c=apptType, Mode__c = 'SU', Start__c =AppointmentTime1100am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1300pm, Assigned_To__c=hsaEmployee.Id, Status__c = 'New');
-        Appointment__c TestAppointment4 = new Appointment__c(Type__c=surveyType, Mode__c = 'SU', Start__c =AppointmentTime1300pm, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1530pm, Assigned_To__c=stmEmployee.Id);
-        Appointment__c TestAppointment5 = new Appointment__c(Type__c=surveyType, Mode__c = 'SU', Start__c =AppointmentTime1530pm, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1730pm, Assigned_To__c=poolEmployee.Id);     
+        Appointment__c TestAppointment1 = new Appointment__c(Type__c=apptType, Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime0900am, Assigned_To__c=poolEmployee.Id , Status__c = 'Appointed',skill_number__c=10);
+        Appointment__c TestAppointment2 = new Appointment__c(Type__c=apptType, Mode__c = 'SA', Start__c =AppointmentTime0900am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1100am, Assigned_To__c=stmEmployee.Id, Status__c = 'New',skill_number__c=10);
+        Appointment__c TestAppointment3 = new Appointment__c(Type__c=apptType, Mode__c = 'SU', Start__c =AppointmentTime1100am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1300pm, Assigned_To__c=hsaEmployee.Id, Status__c = 'New',skill_number__c=10);
+        Appointment__c TestAppointment4 = new Appointment__c(Type__c=surveyType, Mode__c = 'SU', Start__c =AppointmentTime1300pm, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1530pm, Assigned_To__c=stmEmployee.Id,skill_number__c=10);
+        Appointment__c TestAppointment5 = new Appointment__c(Type__c=surveyType, Mode__c = 'SU', Start__c =AppointmentTime1530pm, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1730pm, Assigned_To__c=poolEmployee.Id,skill_number__c=10);     
         Appointment__c [] TestAppointments = new Appointment__c[]{TestAppointment1, TestAppointment2, TestAppointment3, TestAppointment4, TestAppointment5};
         insert TestAppointments;
         System.debug('TestAppointment1 Id is '+TestAppointment1.Id+' TestAppointment2 Id is '+TestAppointment2.Id+' TestAppointment3 Id is '+TestAppointment3.Id);
@@ -424,7 +424,7 @@ private class TestAvailiabilityP1Controller {
         datetime AppointmentEndTime = datetime.newinstance(pageDate.Year(), pageDate.addMonths(1).Month(), pageDate.addDays(1).Day(), 17,30,0);     
         Id availableRecordTypeId = [select id from RecordType where Name = 'Available' and SobjectType='Appointment__c' limit 1].Id;        
 
-        Appointment__c TestAppointment1 = new Appointment__c(Type__c='sales', Mode__c = 'SA', Start__c =AppointmentstartTime, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentEndTime, Assigned_To__c=emp.Id , Status__c = 'Appointed', Opportunity__c=opp.id);
+        Appointment__c TestAppointment1 = new Appointment__c(Type__c='sales', Mode__c = 'SA', Start__c =AppointmentstartTime, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentEndTime, Assigned_To__c=emp.Id , Status__c = 'Appointed', Opportunity__c=opp.id,skill_number__c=10);
         
         String pageSource = 'FF';
         String pageView = 'null';

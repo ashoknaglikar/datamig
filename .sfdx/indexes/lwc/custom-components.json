@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-[{"_allAttributes":null,"_properties":null,"_methods":null,"file":"/Users/ashoknagaleekar/VSCOde Workspaces/datamig-1/force-app/main/default/lwc/myComponent/myComponent.js","metadata":{"decorators":[],"declarationLoc":{"start":{"line":3,"column":0},"end":{"line":3,"column":60}},"classMembers":[],"exports":[{"type":"ExportDefaultDeclaration"}]},"updatedAt":"2021-03-15T13:04:46.377Z"}]
-=======
-[{"_allAttributes":null,"_properties":null,"_methods":null,"file":"/Users/ashoknagaleekar/VSCOde Workspaces/datamig-1/force-app/main/default/lwc/myComponent/myComponent.js","metadata":{"decorators":[],"declarationLoc":{"start":{"line":3,"column":0},"end":{"line":3,"column":60}},"classMembers":[],"exports":[{"type":"ExportDefaultDeclaration"}]},"updatedAt":"2021-03-11T11:22:12.878Z"}]
->>>>>>> 22a0978501ea0f25e116cfa595169e0287b9244a
+[{"_allAttributes":null,"_properties":null,"_methods":null,"file":"/Users/ashoknagaleekar/VSCOde Workspaces/datamig-1/force-app/main/default/lwc/myComponent/myComponent.js","metadata":{"decorators":[],"declarationLoc":{"start":{"line":3,"column":0},"end":{"line":3,"column":60}},"classMembers":[],"exports":[{"type":"ExportDefaultDeclaration"}]},"updatedAt":"2021-05-20T13:57:32.225Z"}]

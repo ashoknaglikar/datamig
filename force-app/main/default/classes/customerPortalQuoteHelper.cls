@@ -94,19 +94,24 @@ global with sharing class customerPortalQuoteHelper {
 													  from Bigmachines_Quote__c where Opportunity__c = :oppID and Stage__c !=null ];
 
 		system.debug('bmQuotes-->'+bmQuotes);
+		boolean isskipQuote = false;
+		for(Bigmachines_Quote__c bq : bmQuotes)
+		{
+		    if(bq.bmStatusReason__c!=null&&(bq.bmStatusReason__c=='Asbestos result – Positive'||bq.bmStatusReason__c=='Asbestos result - Negative' ))
+		    isskipQuote=true;
+		}
 		for(Bigmachines_Quote__c bq : bmQuotes)
 		{
 			// if Primary Quotes exists retrun null.
 			if(bq.Is_Primary__c || bq.Stage__c    == 'Quote Finalised - Accepted')
 			return null;
 			
-			//if status reson containds anything with Asbestos . Return null
-			/*
-			if(bq.bmStatusReason__c!=null && bq.bmStatusReason__c.contains('Asbestos'))
-			return null;
-			*/
+			//if status reson contains 'Awaiting asbestos results' and there is any positive ornegative asbestos quote then ignore that quote.
+			if(isskipQuote && bq.bmStatusReason__c!=null && bq.bmStatusReason__c=='Awaiting asbestos results')
+			continue;
+			
+			
 			// check for quote expiry rule
-
 			integer quoteExpiryDays = Integer.valueof(IV_Vectors__c.getInstance('Quote_Expiry_Days').Key__c);
 			
 			system.debug('Expiry -->'+quoteExpiryDays);

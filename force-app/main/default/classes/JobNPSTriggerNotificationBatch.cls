@@ -113,14 +113,12 @@ global class JobNPSTriggerNotificationBatch implements database.batchable<sobjec
            }
            jobSurveydata.skeys.addAll(skeyList);
            
-           if(job.Best_Phone_Number__c!=null)
+           if(job.Best_Phone_Number__c!=null && job.Best_Phone_Number__c.IsNumeric())
            {
-               if(job.Best_Phone_Number__c.IsNumeric())
                jobSurveydata.phonenumber =String.valueOf(long.valueOf(job.Best_Phone_Number__c));
            }
-           else if(job.Home_Phone__c!=null)
+           else if(job.Home_Phone__c!=null && job.Home_Phone__c.IsNumeric())
            {
-               if(job.Home_Phone__c.IsNumeric())
                jobSurveydata.phonenumber = String.valueOf(long.valueof(job.Home_Phone__c));
            }
            jobSurveydata.countrycode = '44';
@@ -187,24 +185,22 @@ global class JobNPSTriggerNotificationBatch implements database.batchable<sobjec
                      jobList[i].NPS_Notification_Status__c ='Success';
                      if(resp.rejectedcount>0)
                      {
+                         /*for(surveyTriggerResponse.cls_rejectedrecords rejRes: resp.rejectedrecords)
+                         {
+                             if(rejRes.reference== jobList[i].CHI_Lead__r.CHI_Lead_Id__c)
+                             jobList[i].NPS_Notification_Status__c ='Failed';
+                         }*/
                          for(surveyTriggerResponse.cls_reason rea: resp.reason)
                          {
                              jobList[rea.index].NPS_Notification_Status__c ='Failed';
-                             jobList[rea.index].NPS_Status_Reason__c=rea.reason;
                          }
                      }
                  }
                  else
-                 {
                    jobList[i].NPS_Notification_Status__c ='Failed';
-                   jobList[i].NPS_Status_Reason__c = response.getbody();
-                 }
              }
              else
-             {
                  jobList[i].NPS_Notification_Status__c ='Failed';
-                 jobList[i].NPS_Status_Reason__c = response.getbody();
-             }
         }
         return jobList;
     }

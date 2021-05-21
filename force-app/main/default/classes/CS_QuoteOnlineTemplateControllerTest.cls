@@ -271,6 +271,7 @@ private class CS_QuoteOnlineTemplateControllerTest {
         appointment.Start__c = Datetime.newInstance(2016,5,5,12,30,0);
         appointment.End__c = Datetime.newInstance(2016,5,5,14,30,0);
         appointment.Opportunity__c= opportunity.id;
+        appointment.skill_number__c=10;
         insert appointment;
    
         basket.appointment__c = appointment.id;
@@ -309,6 +310,8 @@ private class CS_QuoteOnlineTemplateControllerTest {
         
          CS_Promotion_Dates__c proDates1 = new CS_Promotion_Dates__c(name='30 Months IFC',Start_Date__c=system.today().addyears(-1),End_Date__c=system.today().adddays(1),Final_Date__c=system.today().adddays(1));
         insert prodates1;
+        CS_Promotion_Dates__c proDates2 = new CS_Promotion_Dates__c(name='36 Months IFC',Start_Date__c=system.today().adddays(-10),End_Date__c=system.today().adddays(1),Final_Date__c=system.today().adddays(1));
+        insert prodates2;
         
         Finance_product__c fp = new finance_product__c(deferral_period__c=0,Interest_Rate__c=9.9,Tenure_in_Months__c=36,name='test product');
         insert fp;

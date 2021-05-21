@@ -31,6 +31,8 @@ trigger OppUpdOnApptInsOrUpd on Appointment__c (before insert, before update)
     	if(newAppt.OFS_ETA_Text__c != null)
     	newAppt.ETA__c = datetime.valueof(newAppt.OFS_ETA_Text__c.trim() );
     	
+    	
+    	
         system.debug('--------------------I am here---------------');
         if(trigger.isupdate)
         {

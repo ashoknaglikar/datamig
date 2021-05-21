@@ -20,7 +20,7 @@ public class diaryEntryTriggerHelper {
                                                             Wednesday_Unavailable_Hours__c,Thursday_Unavailable_Hours__c,Friday_Unavailable_Hours__c,
                                                             Saturday_Unavailable_Hours__c,Sunday_Unavailable_Hours__c,Employee__r.Own_Labour__c, 
                                                             (Select Employee_Name__c, Type__c, Sub_Type__c, Start__c, Hours__c, End__c, Job__c, Job__r.Name, Overbooked_Hours__c,
-                                                            week__c,Record_Type__c, GPS_Hours__c from Diary_Entries__r order by Start__c ), 
+                                                            week__c,Record_Type__c, GPS_Hours__c, Pack_Hours__c from Diary_Entries__r order by Start__c ), 
                                                             (select id, Date__c, Day__c ,   ExternalId__c from Workday_Reports__r) from Week__c where Id = : weekIdDiaryEntryMap.keyset()]);
         
         list<diaryEntryTriggerHelper.workdayInnerClass> workDayObjList = new list<diaryEntryTriggerHelper.workdayInnerClass>();
@@ -69,6 +69,7 @@ public class diaryEntryTriggerHelper {
                         jobObj.hours += objWorkDay.jobClassMap.get(j).hours;
                         jobObj.overbooking += objWorkDay.jobClassMap.get(j).overbooking;
                         jobObj.gpsAdjustedHours +=objWorkDay.jobClassMap.get(j).gpsAdjustedHours;
+                        jobObj.packHours +=objWorkDay.jobClassMap.get(j).packHours;
                         tempobj.jobClassMap.put(j,jobObj); 
                         
                     }else
@@ -112,7 +113,7 @@ public class diaryEntryTriggerHelper {
         double OverbookedHours = (de.Overbooked_Hours__c!=null)?de.Overbooked_Hours__c:0.00;
         double gpsDeHours = (de.GPS_Hours__c!=null)?de.GPS_Hours__c:0.00;
         double Hours = (de.Hours__c!=null)?de.Hours__c:0.00;
-        
+        double packHours = (de.Pack_Hours__c!=null)?de.Pack_Hours__c:0.00;
         for(integer i = 0; i<= numberofDays; i++)
         {
             
@@ -156,6 +157,7 @@ public class diaryEntryTriggerHelper {
                 {
                     decimal overBookingForthatDay = decimal.valueof((OverbookedHours*hours4Day/Hours)).setscale(2); //de.Overbooked_Hours__c*hours4Day/de.Hours__c;
                     decimal gpsHoursForThatDay = decimal.valueof((gpsDeHours*hours4Day/Hours)).setScale(2);
+                    decimal packHoursForThatDay = decimal.valueof((packHours*hours4Day/Hours)).setScale(2);
                     diaryEntryTriggerHelper.jobInnerClass jobObj = new diaryEntryTriggerHelper.jobInnerClass( stdStart, de.Job__r.Name,wk.Name);
                     system.debug('I am outside'+wokdayObj.jobClassMap.ContainsKey(de.Job__c));
                     system.debug('I am outside'+wokdayObj.jobClassMap);
@@ -166,12 +168,14 @@ public class diaryEntryTriggerHelper {
                         jobObj.hours += hours4Day;
                         jobObj.overbooking += overBookingForthatDay;
                         jobObj.gpsAdjustedHours +=gpsHoursForThatDay;
+                        jobObj.packHours +=packHoursForThatDay;
                         system.debug('I am inside'+jobObj);
                     }else
                     {
                         jobObj.hours = hours4Day;
                         jobObj.overbooking = overBookingForthatDay;
                         jobObj.gpsAdjustedHours =gpsHoursForThatDay;
+                        jobObj.packHours =packHoursForThatDay;
                     }
                     system.debug('Job -->'+jobObj);
                     system.debug('jobObj.gpsAdjustedHours--->'+jobObj.gpsAdjustedHours);
@@ -239,7 +243,8 @@ public class diaryEntryTriggerHelper {
                 Overbooked_Hours__c = jobObj.overbooking,
                 Premier_Hours__c = jphours,
                 Job_Number__c = jobObj.jobNumber,
-                CTAP_Delivered_Hours__c = jobObj.gpsAdjustedHours
+                CTAP_Delivered_Hours__c = jobObj.gpsAdjustedHours,
+                Pack_Hours__c = jobObj.packHours
                 );
                 if(jopPriority.containsKey(jobObj.jobNumber))
                 jobHourObj.Order__c = jopPriority.get(jobObj.jobNumber);
@@ -319,6 +324,7 @@ public class diaryEntryTriggerHelper {
         public decimal overbooking = 0;
         public string jobNumber;
         public decimal gpsAdjustedHours =0.0;
+        public decimal packHours = 0.0;
         public jobInnerClass( dateTime date_x, string jobNumber, String weekId)
         {
             this.externalId = weekId+string.valueof(date_x.date())+jobNumber;

@@ -109,7 +109,7 @@ global with sharing class onlineBoilersBundleReturn {
         }
         
         for(Bundle__c b : [Select id, Name,Install_Price__c ,Reference_Code__c, Gross_Price__c, Total_Price__c, Total_Allowances__c, (Select id, Name, CS_Part__r.Name, CS_Part__r.Description__c, CS_Part__c, CS_Part__r.Part_Code__c, Price__c, Quantity__c from Bundle_Parts__r ), (Select id, Amount__c, Code__c,CS_Allowance__c, CS_Allowance__r.Name from Bundle_Allowances__r where Active__c = true) from Bundle__c 
-                          where Scotland__c = :Scotland and Hive__c = :hiveReq and Plume_Kit__c = :plumekit and active__c = true])
+                          where Scotland__c = :Scotland and Hive__c = :hiveReq and Plume_Kit__c = :plumekit and active__c = true and EICR__c=false])
         {
             decimal activeallowaceTotal = 0;
             bundleResponseClass.Bundle bundleObj = new bundleResponseClass.Bundle();

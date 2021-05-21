@@ -51,7 +51,7 @@ private class TestAutopopCauser{
        Id availableRecordTypeId = [select id from RecordType where Name = 'Available' and SobjectType='Appointment__c' limit 1].Id;    
        datetime AppointmentTime0700am = datetime.newinstance(date.today().Year(), date.today().addMonths(1).Month(), date.today().addDays(1).Day(), 7,0,0);    
        datetime AppointmentTime0900am = datetime.newinstance(date.today().Year(), date.today().addMonths(1).Month(), date.today().addDays(1).Day(), 9,0,0);
-       Appointment__c TestAppointment1 = new Appointment__c(Type__c='sales', Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime0900am, Assigned_To__c=emp.Id,opportunity__c=opportunity.id,status__c='Appointed',Who__c=contact.id);
+       Appointment__c TestAppointment1 = new Appointment__c(Type__c='sales', Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime0900am, Assigned_To__c=emp.Id,opportunity__c=opportunity.id,status__c='Appointed',Who__c=contact.id,skill_number__c=10);
        insert TestAppointment1;
        
        BigMachines_Quote__c quote= new BigMachines_Quote__c(Name = 'Test for Quote Decompile', Opportunity__c = opportunity.Id,discountsTotalOnPricing__c=100,

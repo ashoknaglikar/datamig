@@ -56,11 +56,24 @@
         if(val.value == 'No'){
             alert('Please click OK to progress with CHB boiler lead and book HSA visit');
         }
+        else if(val.value == 'Roof'){
+            alert('Please click OK to progress with CHB boiler lead and book HSA visit');
+        }
+        else if(val.value == 'Higher'){
+            alert('Please click OK to progress with CHB boiler lead and book HSA visit');
+        }
+        else if(val.value == '15+'){
+            alert('Please click OK to progress with CHB boiler lead and book HSA visit');
+        }
     }
+    
     function hsaPlan1(val){
-    if(val.value == '3+'){
-    alert('Please click OK to progress with CHB boiler lead and book HSA visit')
-    }
+        if(val.value == '3+'){
+        alert('Please click OK to progress with CHB boiler lead and book HSA visit')
+        }
+        else if(val.value == 'Yes'){
+            alert('Please click OK to progress with CHB boiler lead and book HSA visit');
+        }
     }
     function teleConve(val,a,prod){
       //alert(a);    
@@ -79,38 +92,53 @@
     }
     
     //COnventional & combi change
-    function checkItems(val,a,b){
+    function checkItems(val,a,b,c){
         var e=document.getElementById(a);
         var f=document.getElementById(b);
+        var g=document.getElementById(c);
         var e1 = document.getElementById('ajaxrequest1'); 
         var f1 = document.getElementById('ajaxrequest5');
+        var g1 = document.getElementById('ajaxrequest9');
         if(!e)return true;
         if(!f)return true;
+        if(!g)return true;
         //alert('---->'+val.value);
         if(val.value == 'Combi'){  
          if(e.style.display=="none"){
             e.style.display="block"
             e1.style.display = "block"
             f.style.display="none"
+            g.style.display="none"
          }
          
-        }else{
+        }else if(val.value == 'Conv'){
             if(f.style.display=="none"){
             f.style.display="block"
             f1.style.display="block"
             e.style.display="none"
+            g.style.display="none"
             }
            
+        }
+        else 
+        {  if(g.style.display=="none"){
+            g.style.display="block"
+            g1.style.display="block"
+            e.style.display="none"
+            f.style.display="none"
+            
+        }
         }
         return true;
     }
     
-    function checkAllFill(ajx,ajx1,ajx2,ajx3){
+    function checkAllFill(ajx,ajx1,ajx2,ajx3,ajx4){
         
         //var e=document.getElementById(ajx);
         var f=document.getElementById(ajx1); 
         var g=document.getElementById(ajx2);  
-        var h=document.getElementById(ajx3);  
+        var h=document.getElementById(ajx3);
+        var i=document.getElementById(ajx4);  
         var type = document.getElementById("{!$Component.Block1:prd_sel_sec1:CON:type}").value;
         //alert(type);
         if(type=="Combi"){
@@ -157,6 +185,29 @@
             } 
             return true;
          }
+         else {
+            if(!g)return true;
+            if(!i)return true;
+            
+            if(i.style.display=="block"){
+               var matches = [];
+               var searchEles = document.getElementById(ajx4).getElementsByTagName("select");
+               for(var i = 0; i < searchEles.length; i++) {
+                    if(searchEles[i].value == ""){
+                      matches.push(searchEles[i].value);
+                      alert('please Answer all the SS Direct Questions');
+                      return false;
+                    }
+               }
+               
+               if(matches == ""){
+                 alert('Please close it');
+               }
+             
+            } 
+            return true;
+         }
+         
         
     
     }
@@ -225,7 +276,7 @@
                           <apex:selectOptions value="{!questiomaireItems}"/>
                       </apex:selectList> -->
                     <apex:actionRegion >
-                    <apex:inputField value="{!combiSwap.Type__c}" id="type" onchange="return checkItems(this,'ajaxrequest3','ajaxrequest4')">
+                    <apex:inputField value="{!combiSwap.Type__c}" id="type" onchange="return checkItems(this,'ajaxrequest3','ajaxrequest4','ajaxrequest8')">
                     </apex:inputField>
                     </apex:actionRegion>
             
@@ -236,7 +287,7 @@
         <apex:pageblock id="blk1">
           <div id="ajaxrequest3" style="display:none;overflow:auto;height:300px;">
            <center><apex:pageBlockButtons >
-           <apex:commandButton value="Save" onClick="return checkAllFill('ajaxrequest','ajaxrequest1','ajaxrequest3','ajaxrequest4')" />
+           <apex:commandButton value="Save" onClick="return checkAllFill('ajaxrequest','ajaxrequest1','ajaxrequest3','ajaxrequest4','ajaxrequest9')" />
            </apex:pageBlockButtons> </center>
            <!-- <div id="ajaxrequest7" style="display:none;">
             <apex:pageblocksection columns="1" id="sec1">
@@ -536,6 +587,45 @@
             </apex:pageblocksection> 
            </div> 
            </div>
+           
+           <div id="ajaxrequest8" style="display:none;overflow:auto;height:300px;">
+              
+              <div id="ajaxrequest9" style="display:none;">    
+                                   
+                 <apex:pageblocksection columns="1" id="sect3"> 
+                    
+                    <apex:pageblocksectionitem labelStyle="text-align:left;" datastyle="width:20%;" id="zzz">
+                        <apex:outputLabel value="Is your current Boiler a Combi ?"  style="font-weight:bolder;"/>
+                        <apex:inputfield value="{!combiSwap.Is_your_current_Boiler_a_Combi__c}"  style="float:right;font-weight:bolder;" onchange="return hsaPlan(this)"/> 
+                  </apex:pageblocksectionitem>
+                  
+                  <apex:pageblocksectionitem labelStyle="text-align:left;" datastyle="width:20%;" id="yyy">
+                        <apex:outputLabel value="Does Flue come out of the wall or roof?"  style="font-weight:bolder;"/>
+                        <apex:inputfield value="{!combiSwap.S_S_TC5__c}"  style="float:right;font-weight:bolder;" onchange="return hsaPlan(this)"/> 
+                  </apex:pageblocksectionitem>
+                  
+                  <apex:pageblocksectionitem labelStyle="text-align:left;" datastyle="width:20%;" id="xxx">
+                        <apex:outputLabel value="Where is the boiler Located ?" for="GF17t" style="font-weight:bolder;"/>
+                        <apex:inputfield value="{!combiSwap.Boiler_Location__c}" id="GF17t" style="float:right;font-weight:bolder;" onchange="return hsaPlan(this)"/> 
+                  </apex:pageblocksectionitem>
+                  
+                  <apex:pageblocksectionitem labelStyle="text-align:left;" datastyle="width:20%;" >
+                        <apex:outputLabel value="Is there anything below flue (Conservatory/Car Port)"  style="font-weight:bolder;"/>
+                        <apex:inputfield value="{!combiSwap.Question_5__c}"  style="float:right;font-weight:bolder;" onchange="return hsaPlan1(this)"/> 
+                  </apex:pageblocksectionitem>
+                  
+                  <apex:pageblocksectionitem labelStyle="text-align:left;" datastyle="width:20%;" >
+                        <apex:outputLabel value="How many radiators in property ?"  style="font-weight:bolder;"/>
+                        <apex:inputfield value="{!combiSwap.How_many_radiators_in_property__c}"  style="float:right;font-weight:bolder;" onchange="return hsaPlan(this)"/> 
+                  </apex:pageblocksectionitem>
+                  
+                  <apex:pageblocksectionitem labelStyle="text-align:left;" datastyle="width:20%;" >
+                        <apex:outputLabel value="Are you happy with how current boiler meets your heating demands in the house ?"  style="font-weight:bolder;"/>
+                        <apex:inputfield value="{!combiSwap.Are_you_happy_with_how_current_boiler_me__c}"  style="float:right;font-weight:bolder;" onchange="return hsaPlan(this)"/> 
+                  </apex:pageblocksectionitem>
+                  </apex:pageblocksection>
+                  </div>
+                  </div>
          
         </apex:pageblock>
    </apex:outputpanel>

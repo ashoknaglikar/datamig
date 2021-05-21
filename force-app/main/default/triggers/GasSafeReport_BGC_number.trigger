@@ -12,19 +12,20 @@ trigger GasSafeReport_BGC_number on Order_Line_Item__c (before insert) {
         }
       }
         
-        List<Product_Order__c> lstProduct = [Select Name, Product_Number__c, Product_Code__c,BGC_NUMBER__c  From Product_Order__c where BGC_NUMBER__c !=null and Product_Code__c IN : lstcode];
+        
     
-        if(lstProduct .size()>0){
+        if(lstcode .size()>0){
+            List<Product_Order__c> lstProduct = [Select Name, Product_Number__c, Product_Code__c,BGC_NUMBER__c  From Product_Order__c where BGC_NUMBER__c !=null and Product_Code__c IN : lstcode];
             
-        for(Product_Order__c objpro: lstProduct){
-            for(Order_Line_Item__c objtemp : Trigger.new){
-                if(objtemp.Code__c ==objpro.Product_Code__c ){
-                    objtemp.BGC_Number__c = objpro.BGC_NUMBER__c;
-                }
-                
-            } 
-                  
-         }
+            for(Product_Order__c objpro: lstProduct){
+                for(Order_Line_Item__c objtemp : Trigger.new){
+                    if(objtemp.Code__c ==objpro.Product_Code__c ){
+                        objtemp.BGC_Number__c = objpro.BGC_NUMBER__c;
+                    }
+                    
+                } 
+                      
+             }
          
      }
      

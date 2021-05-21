@@ -1,0 +1,16 @@
+<apex:page standardController="case" extensions="caseDiaryEntryListController" showHeader="false" sidebar="false" tabStyle="case" >
+
+    
+    <apex:pageBlock rendered="true" >
+        <apex:pageblockTable value="{!diaryEntryDetail}" var="DE">
+           <apex:column headerValue="Name" value="{!DE.Employee_Name__c}"/>
+           <apex:column headerValue="Mobile" value="{!DE.Employee_Phone__c}"/>
+           <apex:column headerValue="Asssigned Hours" value="{!DE.Job_Time_Break_down__c}"/>
+           <apex:column headerValue="CDM" value="{!DE.week__r.employee__r.manager__r.name}"/>
+           <apex:column headerValue="CDM Mobile" value="{!DE.week__r.employee__r.manager__r.Phone_No__c}"/>
+           <apex:column headerValue="Area Manager" value="{!DE.week__r.employee__r.manager__r.manager__r.name}"/>
+           <apex:column headerValue="Area Manager Mobile" value="{!DE.week__r.employee__r.manager__r.manager__r.Phone_No__c}"/>
+        </apex:pageblockTable>
+    </apex:pageBlock>
+
+</apex:page>

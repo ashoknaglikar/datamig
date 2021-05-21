@@ -159,24 +159,22 @@ global class ApptNPSTriggerNotificationBatch implements database.batchable<sobje
                      apptList[i].NPS_Notification_Status__c ='Success';
                      if(resp.rejectedcount>0)
                      {
+                         /*for(surveyTriggerResponse.cls_rejectedrecords rejRes: resp.rejectedrecords)
+                         {
+                             if(rejRes.reference== apptList[i].Opportunity__r.CHI_Lead_Id__c)
+                             apptList[i].NPS_Notification_Status__c ='Failed';
+                         }*/
                          for(surveyTriggerResponse.cls_reason rea: resp.reason)
                          {
                              apptList[rea.index].NPS_Notification_Status__c ='Failed';
-                             apptlist[rea.index].NPS_Status_Reason__c=rea.reason;
                          }
                      }
                  }
                  else
-                 {
                    apptList[i].NPS_Notification_Status__c ='Failed';
-                   apptlist[i].NPS_Status_Reason__c = response.getbody();
-                 }
              }
              else
-             {
                  apptList[i].NPS_Notification_Status__c ='Failed';
-                 apptlist[i].NPS_Status_Reason__c = response.getbody();
-             }
         }
         return apptList;
     }

@@ -47,7 +47,7 @@ private class TestAppointmentHistoryCreator {
         
         Id availableRecordTypeId = [select id from RecordType where Name = 'Available' and SobjectType='Appointment__c' limit 1].Id;        
 
-        TestAppointment1 = new Appointment__c(Type__c='Sales', Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime0900am, Assigned_To__c=emp.Id , Status__c = 'Appointed', Create_History__c = true,Opportunity__c=opp.id,who__c=contact.id);
+        TestAppointment1 = new Appointment__c(Type__c='Sales', Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime0900am, Assigned_To__c=emp.Id , Status__c = 'Appointed', Create_History__c = true,Opportunity__c=opp.id,who__c=contact.id,skill_number__c=10);
         insert TestAppointment1;
         
         

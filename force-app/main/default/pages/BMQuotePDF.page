@@ -656,7 +656,7 @@
 
     <body>
         <page size="A4" id="page1">
-            <div class="content" style="width: 700px; margin-left: 5px; margin-right: 5px; height: 950px; display:{!if(wayToPayVersion==1, "block", "none")};">
+            <div class="content" style="width: 700px; margin-left: 5px; margin-right: 5px; height: 950px; display:{!if(OR(wayToPayVersion==1,wayToPayVersion==3), "block", "none")};">
                 <div class="clearfix" id="logoPng">
                     <apex:image id="theImageBG" styleClass="bgLogo" value="{!URLFOR($Resource.quoteOnlinePageRes, 'BG_logo_s.resource')}" width="150" rendered="{!logoBG == true}" />
                     <apex:image id="theImageSG" styleClass="bgLogo" value="{!URLFOR($Resource.quoteOnlinePageRes, 'SG_logo_s.resource')}" width="150" rendered="{!logoBG == false}" />
@@ -719,11 +719,20 @@
                                         <!--new content-->
                         <div id="red-circle" class="redBallon" style="width:140px;height:140px;position:relative;top:-250px;left:-30px">
                             <div id="red-circle-text" style="text-align:center;padding-top: 34%;">
-                                <p style="color:white;">
+                                <apex:outputPanel rendered="{!if(wayToPayVersion==1,true,false)}">
+                                <p style="color:white;" >
                                     30 Months interest-free
                                     <br/>credit<br />
                                     available*
                                 </p>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!if(wayToPayVersion==3,true,false)}">
+                                <p style="color:white;">
+                                    36 Months interest-free
+                                    <br/>credit<br />
+                                    available*
+                                </p>
+                                </apex:outputPanel>
                             </div>
                         </div>
                     </div>

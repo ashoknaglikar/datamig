@@ -1,4 +1,4 @@
-<apex:page controller="WorkdayReportHelper" tabStyle="WorkdayReport__c" id="pg" standardStylesheets="true">
+<apex:page controller="WorkdayReportHelper" tabStyle="WorkdayReport__c" id="pg" standardStylesheets="true" action="{!PopulateData}">
  <style>
    
   .headerStyle {
@@ -54,7 +54,7 @@
                         <apex:outputLabel value="End Date:" for="endDate"></apex:outputLabel>
                         <apex:inputfield value="{!obj_workday2.Date__c}" id="startDate"/>  
                     </apex:pageblocksectionItem> -->
-                    <apex:pageblocksectionItem id="thesection3" rendered="{!IF(OR(contains($Profile.Name,'System Administrator'), contains($Profile.Name,'CHI Installation - AHM'),contains($Profile.Name,'CHI Installation - DHM'),contains($Profile.Name,'CHI Installation - Operations Manager')   ),true,false)}">
+                    <apex:pageblocksectionItem id="thesection3" rendered="{!IF(OR(contains($Profile.Name,'Administrator'), contains($Profile.Name,'CHI Installation - AHM'),contains($Profile.Name,'CHI Installation - DHM'),contains($Profile.Name,'CHI Installation - Operations Manager')   ),true,false)}">
                         <apex:outputLabel value="Installer" for="inst"></apex:outputLabel>
                         <apex:inputfield value="{!Week.Employee__c}" id="inst"/>  
                     </apex:pageblocksectionItem>
@@ -118,7 +118,7 @@
       </apex:outputpanel>
       </div>-->
       <br/> 
-      <div style="colour:blue">
+      <div style="colour:#d1eb52">
         <apex:outputPanel rendered="{JobHoursList[0].Workdayrep.Lock__c}">
           The Report is now locked and travel times are now finalised.
 
@@ -131,15 +131,15 @@
            <th colspan="1" style="text-align:center" width="25%">
                 <table width="100%" >
                   <tr >
-                    <th style="text-align:center" width="46%">Job Number</th>
-                    <th style="text-align:center" width="27%">Planned Time</th>
-                    <th style="text-align:center" width="27%">CTAP Delivered Hours</th>
+                    <th style="text-align:center" width="33%">Job Number</th>
+                    <th style="text-align:center" width="33%">Pack Hours</th>
+                    <th style="text-align:center" width="33%">CTAP Hours</th>
                     <!--<th style="text-align:center" width="25%">Over Booked</th>-->
                   </tr>
                 </table> 
                    
            </th>
-           <th colspan="1" style="text-align:center" width="9%">Start - Job T T
+           <th colspan="1" style="text-align:center" width="9%">Start of Day Travel
               <table width="100%" >
                 <tr >
                   <th style="text-align:center" width="50%">Total</th>
@@ -148,7 +148,7 @@
               </table>
            </th>
            <th colspan="1" style="text-align:center" width="9%">In-Day T T - Job</th>
-           <th colspan="1" style="text-align:center" width="9%">Job - Start T T
+           <th colspan="1" style="text-align:center" width="9%">End of Day Travel
             <table width="100%" >
               <tr >
                 <th style="text-align:center" width="50%">Total</th>
@@ -168,7 +168,7 @@
             
              <td bgcolor="#FFFF33" ><apex:outputText value=" {!w.Workdayrep.Date__c}"/></td>  
              <td bgcolor="#FFFF33" ><apex:outputText value="{!LEFT(w.Workdayrep.Day__c,3)}"/></td> 
-             <td>
+             <td  >
              <apex:outputpanel rendered="{!w.jHours.size > 0}">  
               <table border="0" cellpadding="0" cellspacing="0" class="list" >
                 
@@ -176,9 +176,9 @@
                  <tr>
                    
                       <td colspan="1" class="ct" width="5%" bgcolor="white"><apex:outputText value="{!jhr.Job_Number__c}"/></td>
-                      <td colspan="1" class="ct" width="10%" bgcolor="{!IF(AND(NOT(ISNULL(jhr.Planned_Time__c)),jhr.Planned_Time__c>0),'white','#ededed')}"><apex:outputText value="{!jhr.Planned_Time__c}"/></td>
+                      <td colspan="1" class="ct" width="10%" bgcolor="{!IF(AND(NOT(ISNULL(jhr.PacK_hours__c)),jhr.PacK_hours__c>0),'white','#ededed')}"><apex:outputText value="{!jhr.Pack_Hours__c}"/></td>
                       
-                      <td colspan="1" class="ct" width="10%" bgcolor="{!IF(AND(NOT(ISNULL(jhr.CTAP_Delivered_Hours__c)),jhr.CTAP_Delivered_Hours__c>0),'white','#ededed')}"><apex:outputText value="{!jhr.CTAP_Delivered_Hours__c}"/></td>
+                      <td colspan="1" class="ct" width="10%" style="text-align:center;color:blue;font-weight:bold;"><apex:outputText value="{!jhr.CTAP_Delivered_Hours__c}"/></td>
                       <!--<td colspan="1" class="ct" width="10%" bgcolor="{!IF(AND(NOT(ISNULL(jhr.Overbooked_Hours__c)),jhr.Overbooked_Hours__c>0),'white','#ededed')}"><apex:outputText value="{0, number, 0.00}">-->
                         <!--<apex:param value="{!jhr.Overbooked_Hours__c}" />
                         </apex:outputText><!--<apex:outputText value="{!jhr.Overbooked_Hours__c}"/>
@@ -192,17 +192,17 @@
              <td bgcolor="white" >
               <table width="100%" >
                 <tr >
-                    <td style="text-align:center" width="50%" bgcolor="{!IF(w.Workdayrep.Start_Job_Total_TT__c>0,'white','')}">{!w.Workdayrep.Start_Job_Total_TT__c}</td>
-                    <td style="text-align:center" width="50%" bgcolor="{!IF(w.Workdayrep.Start_Job_Excess_TT__c>0,'white','')}">{!w.Workdayrep.Start_Job_Excess_TT__c}</td>
+                    <td style="text-align:center" width="50%" >{!w.Workdayrep.Start_Job_Total_TT__c}</td>
+                    <td style="text-align:center;color:blue;font-weight:bold;" width="50%" >{!w.Workdayrep.Start_Job_Excess_TT__c}</td>
                 </tr>
               </table>
              </td>
-             <td bgcolor="{!IF(w.Workdayrep.Total_Travel_Time__c>0,'white','')}"><apex:outputText value="{!w.Workdayrep.Travel_Time_in_Minutes__c}"/></td>
-             <td bgcolor="white" >
+             <td style="text-align:center;color:blue;font-weight:bold;"><apex:outputText value="{!w.Workdayrep.Total_Travel_Time__c}"/></td>
+             <td  bgcolor="white" >
                 <table width="100%" >
                 <tr >
-                  <td style="text-align:center" width="50%" bgcolor="{!IF(w.Workdayrep.Start_Job_Total_TT__c>0,'white','')}">{!w.Workdayrep.Job_Start_Total_TT__c}</td>
-                  <td style="text-align:center" width="50%" bgcolor="{!IF(w.Workdayrep.Start_Job_Excess_TT__c>0,'white','')}">{!w.Workdayrep.Job_Start_Excess_TT__c}</td>
+                  <td style="text-align:center" width="50%" bgcolor="white">{!w.Workdayrep.Job_Start_Total_TT__c}</td>
+                  <td style="text-align:center;color:blue;font-weight:bold;" width="50%" >{!w.Workdayrep.Job_Start_Excess_TT__c}</td>
                 </tr>
                 </table>
             </td>
@@ -220,7 +220,7 @@
                     <thead class="">
                      <tr bgcolor="#FFA57D">
                        <TH colspan="1" class="ct" width="10%">Totals</TH>
-                       <TH colspan="1" class="ct" width="10%">{!calTotHours.Tot_Planned_Hours}</TH>
+                       <TH colspan="1" class="ct" width="10%">{!calTotHours.Tot_Pack_hours}</TH>
                        <TH colspan="1" class="ct" width="10%">{!calTotHours.Tot_CTAP_Hours}</TH>
                        <!--<TH colspan="1" class="ct" width="10%">{!calTotHours.Tot_OB_Hours}</TH>-->
                      </tr>

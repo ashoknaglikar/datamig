@@ -875,9 +875,13 @@ public class JobInstallerDiaryListView {
     }
     //Method to redirect to the workday Report page.
     public pageReference workDayReport(){
-       employeeList= [Select id from Employee__c where Salesforce_User__c = :userinfo.getuserId()];
+        
+       employeeList= [Select id, District__r.CTAP_Ready__c  from Employee__c where Salesforce_User__c = :userinfo.GetUserId()];
        string sid = Week.Employee__c!=null ?Week.Employee__c :employeeList[0].Id;
+       employeeList= [Select id, District__r.CTAP_Ready__c  from Employee__c where Id = :sid];
        pageReference pageref = new pagereference('/apex/workdayReport?&Installer='+sid+'&w='+ obj_Job3.Job_Notification_Date__c.format());
+       if(employeeList[0].District__r.CTAP_Ready__c)
+       pageref = new pagereference('/apex/workdayReportWithCTAP?&Installer='+sid+'&w='+ obj_Job3.Job_Notification_Date__c.format());
        pageRef.setRedirect(true);
        return pageRef;
     }

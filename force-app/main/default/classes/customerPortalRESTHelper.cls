@@ -56,7 +56,7 @@ global with sharing class customerPortalRESTHelper {
         
         if(result.size()>0)
         {
-            
+            system.debug(result);
             for(Opportunity o : result)
             {
                 if(notEligiblePI.contains(','+o.Product_Interest__c+','))
@@ -108,8 +108,15 @@ global with sharing class customerPortalRESTHelper {
             
            if(vaildOpportunity[0].Payment_Reference_Number__c==null&&(system.label.Deposit_Reference_Number=='on'||vaildOpportunity[0].Derived_Payment_Reference_Number__c))
             {
+                try{
                 Deposit_Number__c depNum= utilities.assignReferenceNumberToLead(vaildOpportunity[0].id);
                 vaildOpportunity[0].Payment_Reference_Number__c= depNum!=null?depNum.name:null;
+                }catch(exception e)
+                {
+                    if(utilities.runningInASandbox())
+                     vaildOpportunity[0].Payment_Reference_Number__c= '81231231238';
+                }
+                
             }
             if(vaildOpportunity[0].Payment_Reference_Number__c!=null)
             returnResponse.paymentReferenceNumber=vaildOpportunity[0].Payment_Reference_Number__c;

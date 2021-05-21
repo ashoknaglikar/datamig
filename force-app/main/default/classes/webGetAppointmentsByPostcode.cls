@@ -27,7 +27,7 @@ public class webGetAppointmentsByPostcode {
           {
               
               // Guided Sale Changes	
-             if(objGetAppointmentsByPostcode.CHILeadChannel==null) 
+             if(objGetAppointmentsByPostcode.CHILeadChannel==null || objGetAppointmentsByPostcode.CHILeadChannel == 'Online' ||  objGetAppointmentsByPostcode.CHILeadChannel == 'Heating Adviser') 
              objGetAppointmentsByPostcode.CHILeadChannel = 'Central Heating Boiler';		
              if(objGetAppointmentsByPostcode.ProductInterest!=null)		
              objGetAppointmentsByPostcode.CHILeadChannel = objGetAppointmentsByPostcode.productInterest;
@@ -122,7 +122,7 @@ public class webGetAppointmentsByPostcode {
                   datetime sfdcStart = latest;
                   datetime sfdcEnd = OFS_Start_Date.adddays(-1);
           
-                  webservice_CHI_Online.GetAppointmentsByPostcodeResponse sfdcResult = callSalesforce( post_code_info[0],  objGetAppointmentsByPostcode.BoilerOp,  process_start_time,  process_end_time , appsres,  sfdcStart , sfdcEnd, null,customerCategory);
+                  webservice_CHI_Online.GetAppointmentsByPostcodeResponse sfdcResult = callSalesforce( post_code_info[0],  objGetAppointmentsByPostcode.BoilerOp,  process_start_time,  process_end_time , appsres,  sfdcStart , sfdcEnd, objGetAppointmentsByPostcode.CHILeadChannel,customerCategory);
           
                   datetime ofsStartDate = OFS_Start_Date;
                   datetime ofsEnddate= earliest;
@@ -140,7 +140,7 @@ public class webGetAppointmentsByPostcode {
                   if(result.AppointmentSlots.size() == 0)
                   {
                         result.Error.Code = 6;
-                        result.Error.Message = 'ERROR: No Available Appoinmnent Slots. ' + post_code_info[0].Name;
+                        result.Error.Message = 'ERROR: No Available Appoinmnent Slots. callSalesforce' + post_code_info[0].Name;
                         return result;
                   } else
                   {
@@ -161,7 +161,7 @@ public class webGetAppointmentsByPostcode {
                 //Change End   
                 else{
                /*****************ONLY IN SALESFORCE********************/
-                  result = callSalesforce(post_code_info[0],  objGetAppointmentsByPostcode.BoilerOp,  process_start_time,  process_end_time , appsres,  latest , earliest, null,customerCategory);
+                  result = callSalesforce(post_code_info[0],  objGetAppointmentsByPostcode.BoilerOp,  process_start_time,  process_end_time , appsres,  latest , earliest, objGetAppointmentsByPostcode.CHILeadChannel,customerCategory);
                   return result;
                 }
             }  
@@ -380,13 +380,14 @@ public class webGetAppointmentsByPostcode {
            set<id> secondaryHSA= new set<id>();
            
            TOA_Product_Interest__c toaPI = TOA_Product_Interest__c.getinstance(productInterest); 
-           
-                    String ToaProductInterest='';
-                    for(TOA_Product_Interest__c t:TOA_Product_Interest__c.getAll().values())
-                    {
-                        if(t.Skill_Number__c!=null&&toaPI.Max_Skill_number__c==t.Skill_Number__c)
-                        ToaProductInterest=t.name;
-                    }
+           system.debug(toaPI +productInterest);
+            String ToaProductInterest='';
+            for(TOA_Product_Interest__c t:TOA_Product_Interest__c.getAll().values())
+            {
+                system.debug(t);
+                if(t.Skill_Number__c!=null&&toaPI.Max_Skill_number__c==t.Skill_Number__c)
+                ToaProductInterest=t.name;
+            }
                     
           if(Remote_Quote_Product__c.getInstance(productInterest) != null)
           {
@@ -397,7 +398,7 @@ public class webGetAppointmentsByPostcode {
                               AND end_date__c >= :latest.date()
                               AND r.Role__r.Employee__r.Pool_Type__c = null
                               AND r.Role__r.Employee__r.Primary_Role__c != 'Pool'
-                              //and product_interest__c INCLUDES (:ToaProductInterest)
+                              and product_interest__c INCLUDES (:ToaProductInterest)
                               ORDER BY r.Role__r.Employee__c];
           
              if(rle_Districts.size()==0 )
@@ -435,7 +436,7 @@ public class webGetAppointmentsByPostcode {
                               AND end_date__c >= :latest.date()
                               AND r.Role__r.Employee__r.Pool_Type__c = null
                               AND r.Role__r.Employee__r.Primary_Role__c != 'Pool'
-                              //and product_interest__c INCLUDES (:ToaProductInterest)
+                              and product_interest__c INCLUDES (:ToaProductInterest)
                               ORDER BY r.Role__r.Employee__c];
             system.debug('rle_sub_patches--- >'+rle_sub_patches);
      
@@ -533,7 +534,7 @@ public class webGetAppointmentsByPostcode {
                   {  
                   //system.debug(a);
                   // Dont allow inday appointment to be booked after 12:00 PM 
-                  if(productInterest == 'Central Heating Boiler' && datetimeconverted > system.now() && a.Start__c.date() < system.today().adddays(1))
+                  if(productInterest == 'Central Heating Boiler' /*&& datetimeconverted < system.now()*/ && a.Start__c.date() < system.today().adddays(1))
                   {
                       continue;
                   }

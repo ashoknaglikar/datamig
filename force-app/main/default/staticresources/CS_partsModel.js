@@ -1921,6 +1921,12 @@ require(['bower_components/q/q'], function (Q) {
             CS.Log.warn("Scaffold P3559 Added");
         }
         
+        //No Asbestos addition code. - Vinoth
+        var isAsbestosIdentified = CS.getAttributeValue("Asbestos_Identified_0","String");
+        if (isAsbestosIdentified == 'No') {
+            additionalPackPartCodesList.push("P2965");
+            CS.Log.warn("*** No Asbestos part P2965 added ***");
+        }
         
         //PCBH3 AUTO ADD        
         //CS.Log.warn("++++++ExistsPCBH3 =="+existsPCBH3);

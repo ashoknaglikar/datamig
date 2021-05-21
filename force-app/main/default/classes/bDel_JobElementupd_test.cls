@@ -228,7 +228,7 @@ private class bDel_JobElementupd_test {
                                  Sale_Flag__c = sale, Show_Time_As__c = showTimeAs,
                                  Status_Reason__c = statusReason, Status__c = status,
                                  Time_Band__c = timeBand, Type__c = typeC,
-                                 Visit_Type__c = visitType, Opportunity__c = opp.id,
+                                 Visit_Type__c = visitType, Opportunity__c = opp.id,skill_number__c=10,
                                  Who__c = who);
                                  app.Job_Element__c= JE.id;
            insert app;

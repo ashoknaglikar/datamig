@@ -129,15 +129,15 @@ public static testMethod void testAvailiabilityP2Controller(){
 	Role_District__c [] TestRoleDistricts = new Role_District__c[]{TestRoleDistrict1, TestRoleDistrict2, TestRoleDistrict3, TestRoleDistrict4};
 	insert TestRoleDistricts;
 	
-	Appointment__c TestAppointment1 = new Appointment__c(Type__c=GreenType, Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1300am, Assigned_To__c=stmEmployee.Id);
+	Appointment__c TestAppointment1 = new Appointment__c(Type__c=GreenType, Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1300am, Assigned_To__c=stmEmployee.Id,skill_number__c=10);
 	 // HSA allocation CR - Starts
-	Appointment__c TestAppointment1_a = new Appointment__c(Type__c=GreenType, Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1300am, Assigned_To__c=stmEmployee_1_a.Id);
-	Appointment__c TestAppointment2 = new Appointment__c(Type__c=GreenType, Mode__c = 'SA', Start__c =AppointmentTime0900am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1100am, Assigned_To__c=stmEmployee.Id);
-	Appointment__c TestAppointment2_1_a = new Appointment__c(Type__c=GreenType, Mode__c = 'SA', Start__c =AppointmentTime0900am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1100am, Assigned_To__c=stmEmployee_1_a.Id);
+	Appointment__c TestAppointment1_a = new Appointment__c(Type__c=GreenType, Mode__c = 'SA', Start__c =AppointmentTime0700am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1300am, Assigned_To__c=stmEmployee_1_a.Id,skill_number__c=10);
+	Appointment__c TestAppointment2 = new Appointment__c(Type__c=GreenType, Mode__c = 'SA', Start__c =AppointmentTime0900am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1100am, Assigned_To__c=stmEmployee.Id,skill_number__c=10);
+	Appointment__c TestAppointment2_1_a = new Appointment__c(Type__c=GreenType, Mode__c = 'SA', Start__c =AppointmentTime0900am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1100am, Assigned_To__c=stmEmployee_1_a.Id,skill_number__c=10);
     // HSA allocation CR - Ends
-	Appointment__c TestAppointment3 = new Appointment__c(Type__c=salesType, Mode__c = 'SU', Start__c =AppointmentTime1100am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1300am, Assigned_To__c=hsaEmployee.Id);
-	Appointment__c TestAppointment4 = new Appointment__c(Type__c=salesType, Mode__c = 'SU', Start__c =AppointmentTime1300am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1530pm, Assigned_To__c=stmEmployee.Id);
-	Appointment__c TestAppointment5 = new Appointment__c(Type__c=salesType, Mode__c = 'SU', Start__c =AppointmentTime1530pm, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1730pm, Assigned_To__c=poolEmployee.Id);		
+	Appointment__c TestAppointment3 = new Appointment__c(Type__c=salesType, Mode__c = 'SU', Start__c =AppointmentTime1100am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1300am, Assigned_To__c=hsaEmployee.Id,skill_number__c=10);
+	Appointment__c TestAppointment4 = new Appointment__c(Type__c=salesType, Mode__c = 'SU', Start__c =AppointmentTime1300am, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1530pm, Assigned_To__c=stmEmployee.Id,skill_number__c=10);
+	Appointment__c TestAppointment5 = new Appointment__c(Type__c=salesType, Mode__c = 'SU', Start__c =AppointmentTime1530pm, Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=AppointmentTime1730pm, Assigned_To__c=poolEmployee.Id,skill_number__c=10);		
 	 // HSA allocation CR - Starts
 	Appointment__c [] TestAppointments = new Appointment__c[]{TestAppointment1_a, TestAppointment2_1_a, TestAppointment1, TestAppointment2, TestAppointment3, TestAppointment4, TestAppointment5};
 	 // HSA allocation CR - Ends

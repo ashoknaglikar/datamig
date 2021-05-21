@@ -1141,12 +1141,19 @@ Sales_Order_Value__c,Component_Type__c, Product_Description__c  From Quote_Produ
                        associatedJob.Installed_Job__c=False;  //Added for Phase 5
                        if(flags[1]==true || hoursAffected[0]==true){
                             associatedJob.Trigger_Update_Work_Hours__c = System.Now();
-                            if(associatedJob.Secondary_Job_Type_New__c==null)
-                            associatedJob.GPS_Hours__c = jobTriggerHelper.calculateBalancingMechanicalHoursReturnJobs(new list<Job__c>{associatedJob},false)[0].GPS_Hours__c;
-                       }
+                        }
                        
                        update associatedJob;
-                    } 
+                    }
+                    
+                     if(hoursAffected[0]==true && associatedJob.Secondary_Job_Type_New__c==null)
+                    {
+                        list<Job__c> jobList =[Select id,Installation_Type__c, Boiler_Location__c,  Total_Hours__c,Balancing_Skill__c/*,  District__r.Premier_Ready__c , District__r.Before_Trial__c */ from Job__c where Id =: associatedJob.Id];
+                        //system.debug('I am calculating new GPS Hours');
+                        associatedJob.GPS_Hours__c = jobTriggerHelper.calculateBalancingMechanicalHoursReturnJobs(jobList,false)[0].GPS_Hours__c;
+                        system.debug('I am calculating new GPS Hours'+associatedJob.GPS_Hours__c);
+                        update associatedJob;
+                    }
                     //ASP DEFECT FIX:PRODUCTION ISSUE: END: 22/09/2010.                                      
                     system.debug('Job status and/or Hours updated');
 

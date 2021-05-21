@@ -23,6 +23,7 @@ public class StraightSwapExtenstion1 {
         questiomaireItems.add(new selectoption('---None---', ''));
         questiomaireItems.add(new selectoption('Combi', 'Combi'));
         questiomaireItems.add(new selectoption('Conv', 'Conv'));
+        questiomaireItems.add(new selectoption('Straight Swap - Direct', 'Straight Swap - Direct'));
         errMsg='';
         errorMsg = new MessageConstants();
         opp = new opportunity();

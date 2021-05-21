@@ -276,9 +276,19 @@ function invokePopUp(idOfDiv){$ac('#'+idOfDiv).modal({persist:true});}
 <apex:outputText value="{!WorkflowInfo.messageStr1}" rendered="{!WorkflowInfo.messageBool1}"/><br/>
 <apex:outputText value="{!WorkflowInfo.messageStr2}" rendered="{!WorkflowInfo.messageBool2}"/>
 </div>
+
+<apex:outputPanel rendered="{!isShowMsg}">
+    <div>
+        <p style="font-size:15px;color:Zaffre;border:1px solid black;padding:10px 10px 10px 10px;text-align:center;background-color:Azure;font-weight:bold;">This customer previosly had a Straight Swap lead, so please check the old Lead for more details.</p>
+    </div> 
+</apex:outputPanel>
+<br/>
+
 <apex:outputPanel rendered="{!checkProfile}" style="float:right;">
 <input type="checkbox" value="deafaultvalues" onclick="javascript: copyDefaultValues();return false;" />
 </apex:outputPanel>
+
+
 <apex:outputpanel ><!-- rendered="{!WorkflowInfo.showCombiswap}">-->
 <!--<a href="#" onclick="invokePopUp('CombiQues')" class="describe">Combi Swap Questionnaire</a><br/><br/>-->
 <a href="#" onclick="invokePopUp('CombiQues')" class="describe">Straight Swap Questionnaire</a><br/><br/>

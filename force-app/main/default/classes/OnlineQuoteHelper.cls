@@ -72,15 +72,17 @@ public class OnlineQuoteHelper {
         }
         
         map<string, CS_Bundle__c> codeBundleMap = new map<string, CS_bundle__c>();
-        //map<string, string> partcodeBundleMap = new map<string, string>();
+        map<string, string> partcodeBundleMap = new map<string, string>();
         for(CS_Bundle__c CSBundle : [Select Id , Quote_Description__c, Product_Code__c ,Section_Level__c, CS_Template_Section_Header__c, (Select id, Part_Code__c from CS_Bundle_Part_Associations__r) from CS_Bundle__c 
                                     where Product_Code__c in : partCode])
         {
             codeBundleMap.put(CSBundle.Product_Code__c , CSBundle);
-            /*
+            //Suguna
             for(CS_Bundle_Part_Association__c bpa:  CSBundle.CS_Bundle_Part_Associations__r)
-            partcodeBundleMap.put(bpa.Part_code__c, CSBundle.Product_Code__c);
-            */
+            {
+                partcodeBundleMap.put(bpa.Part_code__c,CSBundle.Product_Code__c);
+            }
+            
             
         }
         
@@ -95,8 +97,26 @@ public class OnlineQuoteHelper {
         
         map<id, CS_QuoteOnlineTemplateController.PDFQuoteDetailSection> level2Sections= new map<id, CS_QuoteOnlineTemplateController.PDFQuoteDetailSection>();
         map<id, CS_QuoteOnlineTemplateController.PDFQuoteDetailSection> level1Sections= new map<id, CS_QuoteOnlineTemplateController.PDFQuoteDetailSection>();
-        decimal noSection = 0.0;           
+        decimal noSection = 0.0;   
+        
+        map<string, List<Quote_Product__c>> bundleQuoteProductMap = new map<string, List<Quote_Product__c>>();
         //CS_QuoteOnlineTemplateController.PDFQuoteDetailSection noPriceSection = new CS_QuoteOnlineTemplateController.PDFQuoteDetailSection();
+        for(Quote_Product__c qp : bQuote.Quote_Products__r)
+        {
+            if(partcodeBundleMap.containskey(qp.name))
+            {
+                String bundleCode =partcodeBundleMap.get(qp.name);
+                if(bundleQuoteProductMap.containskey(bundleCode))
+                {
+                    List<Quote_Product__c> qplist = bundleQuoteProductMap.get(bundleCode);
+                    qplist.add(qp);
+                    bundleQuoteProductMap.put(bundleCode,qplist);
+                }else
+                bundleQuoteProductMap.put(bundleCode,new List<Quote_Product__c>{qp});
+            }
+        }
+        
+        boolean isAddNOSection=false;
         for(Quote_Product__c qp : bQuote.Quote_Products__r)
         {
             string quoteDes = '';
@@ -125,6 +145,10 @@ public class OnlineQuoteHelper {
                     
                 }
             }
+            
+            if(partcodeBundleMap.containsKey(qp.name))
+            continue;
+            
             string templateId ;
             
             if(codePartMap.containskey(qp.Name))
@@ -156,8 +180,22 @@ public class OnlineQuoteHelper {
             {
                 //quoteDes = quoteDes.replace('Your', '');
                 CS_Template_Section_Header__c tempObj = allSectionsMap.get(templateId);
-                
                 string total = qp.Gross_Total__c>0 ? '£'+string.valueof(qp.Gross_Total__c):'';
+                
+                if(codeBundleMap.containsKey(qp.name))
+                {
+                    decimal totaldec=0.0;
+                    List<Quote_Product__c> qplist = bundleQuoteProductMap.get(qp.name);
+                    for(Quote_Product__c qp1:qplist)
+                    {
+                      totaldec+= (qp1.Gross_Total__c);
+                    }
+                    total = totaldec>0?'£'+string.valueof(totaldec):'';
+                }
+                
+               if(quoteDes.contains('We will replace your existing')&& qp.Gross_Total__c<=0)
+               isAddNOSection= true;
+                
                 if(tempObj.Level_1_Section__c !=null)
                 {
                     if(!level2Sections.containskey(tempObj.id))
@@ -224,12 +262,14 @@ public class OnlineQuoteHelper {
                     
                     CS_Template_Section_Header__c child =   allSectionsMap.get(j);
                     if(child.Name.contains('installation and associated work'))
-                    {
+                    {  
+                        level2Sections.get(j).items.sort();
                         for(CS_QuoteOnlineTemplateController.PDFQuoteLineItem item : level2Sections.get(j).items)
                         {
-                            if(item.price == '' && item.Name.contains('We will replace your existing'))
+                            if(isAddNOSection&& item.Name.contains('We will replace your existing'))
                             {
-                                item.price= '£'+string.valueof(noSection);  
+                                item.price = item.price!=''?item.price.remove('£'):'0';
+                                item.price = '£'+string.valueof(noSection+decimal.valueof(item.price));  
                                 break;
                             }
                         }

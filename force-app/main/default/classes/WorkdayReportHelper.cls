@@ -41,13 +41,42 @@ public class WorkdayReportHelper {
       startDate = date.parse(prevnxtDate);
       //obj_workday1.Date__c = startDate;
       obj_Job1.Job_Notification_Date__c = startDate;
-      populateData();
+      //populateData();
     }
 
     //obj_workday2.Date__c = startDate;
   }
+  
+  public pagereference reDirectCTAPUsers()
+  {
+    Id_Installer = apexpages.currentpage().getparameters().get('Installer');
+    if (week.Employee__c != null)
+      Id_Installer = week.Employee__c; //
+    else if (Id_Installer != null) {
+      week.Employee__c = Id_Installer;
+    }else
+    {
+        Id_Installer = [select Id, salesforce_User__c  from Employee__C where salesforce_User__c = :userinfo.getUserId() limit 1].Id;
+    }
+    
+    Employee__c e = [select Id, District__r.CTAP_ready__c  from Employee__C where id = :Id_Installer ];
+    
+    if(e!=null && e.District__r.CTAP_Ready__c)
+    {
+        startDate = obj_Job1.Job_Notification_Date__c.toStartOfWeek();
+        pagereference pageref = new pagereference('/apex/workdayReportWithCTAP?&Installer='+e.Id+'&w='+ startDate.format());
+        pageRef.setRedirect(true);
+        return pageRef;
+    }else
+    {
+        populateData();
+        return null;
+    }
+  }
 
   public void populateData() {
+      
+      
     //JobHoursList.clear();
     renderReport = true;
     //Id_Installer = userInfo.getUserId();
@@ -88,9 +117,19 @@ public class WorkdayReportHelper {
     system.debug(LoggingLevel.INFO, '-=-=-=-=-=-=-=>' + JobHoursList);
     list<map<date, map<string, decimal>>> travelTimeInfo = new List<map<date, map<string, decimal>>>();
 
-    if (dateJobIdMap.size() > 0 && !ReportList[0].Lock__c) {
+    if (dateJobIdMap.size() > 0 /* && !ReportList[0].Lock__c */) {
       system.debug(dateJobIdMap);
+      try{
       travelTimeInfo = calculcateTravelTime(dateJobIdMap, Id_Installer);
+      }catch (Exception e)
+      {     /*
+           ApexPages.addMessage(
+            new ApexPages.message(
+              ApexPages.severity.error,
+              'The Travel Times could not be calcualted by the system.'
+              
+        )*/
+      }
       system.debug(travelTimeInfo);
       List<Job_Hour__c> updateList = new List<Job_Hour__c>();
       if (travelTimeInfo.size() == 2) {
@@ -116,14 +155,14 @@ public class WorkdayReportHelper {
           }
           updateList.addall(wdRep.Job_Hours__r);
 
-          if (wdRep.Date__c <= system.today() -integer.valueof(label.WorkDay_Lock))
+          /*if (wdRep.Date__c <= system.today() -integer.valueof(label.WorkDay_Lock))
             wdRep.Lock__c = true;
             ApexPages.addMessage(
             new ApexPages.message(
               ApexPages.severity.info,
               'The Travel Times are now recalcualted for final time.'
         )
-        );
+        );*/
         }
       }
 
@@ -194,6 +233,8 @@ public class WorkdayReportHelper {
     public Decimal Tot_Start_Job_Execss_TT { get; set; }
     public Decimal Tot_Job_Start_Total_TT { get; set; }
     public Decimal Tot_Job_Start_Excess_TT { get; set; }
+    public Decimal Tot_Travel_Time_Minutes { get; set; }
+    public decimal Tot_Pack_hours {get;set;}
     public CalculateTotalHours() {
       Tot_Unavailability_Hours = 0.00;
       Tot_NWD_Hours = 0.00;
@@ -207,6 +248,8 @@ public class WorkdayReportHelper {
       Tot_Start_Job_Execss_TT=0;
       Tot_Job_Start_Total_TT=0;
       Tot_Job_Start_Excess_TT=0;
+      Tot_Travel_Time_Minutes = 0;
+      Tot_Pack_hours = 0.0;
     }
   }
 
@@ -311,6 +354,8 @@ public class WorkdayReportHelper {
     );
 
     BingTravelResponse responseObj = new BingTravelResponse();
+    if(responseBody!='')
+    {
     responseObj = BingTravelResponse.parse(responseBody);
     List<BingTravelResponse.cls_results> results = new List<BingTravelResponse.cls_results>();
     if (responseObj.statusCode == 200) {
@@ -339,7 +384,7 @@ public class WorkdayReportHelper {
       {
         if(results[j].originIndex==0 && results[j].destinationIndex!=0)
         {
-          startToJobTime.put(new list<string>(startToJobsNewList)[sizeInt], decimal.valueof(results[j].travelDuration).setScale(2));
+          startToJobTime.put(new list<string>(startToJobsNewList)[sizeInt], results[j].travelDuration.intvalue());
           sizeInt++;
         }
         
@@ -349,7 +394,7 @@ public class WorkdayReportHelper {
       {
         if(results[j].destinationIndex==0 && results[j].originIndex!=0)
         {
-          jobToStartTime.put(new list<string>(jobsToStartNewList)[sizeInt], decimal.valueof(results[j].travelDuration).setScale(2));
+          jobToStartTime.put(new list<string>(jobsToStartNewList)[sizeInt], results[j].travelDuration.intvalue());
           sizeInt++;
         }
         //jobToStartTime.put(new list<string>(jobsToStart)[j-1], decimal.valueof(results[j].travelDuration));
@@ -406,12 +451,12 @@ public class WorkdayReportHelper {
         list<string> jobsForTheDay = dateJobIdMap.get(d);
         tempToJobMap.put(
             d,
-            new Map<string, decimal>{ jobsForTheDay[0] => startToJobTime.get(jobsForTheDay[0]) }
+            new Map<string, decimal>{ jobsForTheDay[0] => (startToJobTime.get(jobsForTheDay[0]) /60).setscale(2)}
           );
 
         tempToHomeMap.put(
             d,
-            new Map<string, decimal>{ jobsForTheDay[1] => jobToStartTime.get(jobsForTheDay[1]) }
+            new Map<string, decimal>{ jobsForTheDay[1] => (jobToStartTime.get(jobsForTheDay[1])/60).setScale(2) }
           );
 
         
@@ -443,6 +488,7 @@ public class WorkdayReportHelper {
       returnTravelTimeInfo.add(tempToJobMap);
       returnTravelTimeInfo.add(tempToHomeMap);
     }
+  }
 
     try {
       if (updateEmp)
@@ -460,11 +506,6 @@ public class WorkdayReportHelper {
     return returnTravelTimeInfo;
   }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> 22a0978501ea0f25e116cfa595169e0287b9244a
   public void loadData(set<Id> empids) {
     JobHoursList = new List<JobHours>();
     dateJobIdMap= new Map<date, list<string>>();
@@ -490,10 +531,8 @@ public class WorkdayReportHelper {
         Job_Start_Excess_TT__c,
         Job_Start_Total_TT__c,
         Lock__c,
-<<<<<<< HEAD
         Travel_Time_in_Minutes__c,
-=======
->>>>>>> 22a0978501ea0f25e116cfa595169e0287b9244a
+        Pack_Hours__c,
         (
           SELECT
             id,
@@ -504,7 +543,8 @@ public class WorkdayReportHelper {
             Premier_Hours__c,
             Workday_Report__c,
             CTAP_Delivered_Hours__c,
-            Planned_Time__c
+            Planned_Time__c,
+            Pack_Hours__c
 
           FROM Job_Hours__r
           ORDER BY Order__c
@@ -545,6 +585,12 @@ public class WorkdayReportHelper {
         calTotHours.Tot_Travel_Time += (wdRep.Total_Travel_Time__c == null)
           ? 0.00
           : wdRep.Total_Travel_Time__c.SetScale(2);
+        calTotHours.Tot_Travel_Time_Minutes += (wdRep.Travel_Time_in_Minutes__c == null)
+          ? 0.00
+          : wdRep.Travel_Time_in_Minutes__c.SetScale(2);
+        calTotHours.Tot_Pack_Hours += (wdRep.Pack_hours__c == null)
+          ? 0.00
+          : wdRep.Pack_hours__c.SetScale(2);
         calTotHours.Tot_Available_Hours += (wdRep.Available_Hours__c == null)
           ? 0.00
           : wdRep.Available_Hours__c.SetScale(2);
@@ -602,8 +648,4 @@ public class WorkdayReportHelper {
       }
     }
   }
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 22a0978501ea0f25e116cfa595169e0287b9244a
 }

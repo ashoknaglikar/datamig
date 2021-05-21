@@ -95,10 +95,12 @@ function togglleDiv(show){
                
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Deposit Payment Type :"></apex:outputLabel>
+                    <apex:outputpanel layout="block" styleClass="requiredInput">
+                    <apex:outputpanel layout="block" styleClass="requiredBlock"></apex:outputpanel>
                      <apex:selectList value="{!selectedDepositMethod}" size="1" multiselect="false">
-                     <apex:selectOptions value="{!depositMethod}" />
+                     <apex:selectOptions value="{!depositMethod}"  />
                      <apex:actionSupport event="onchange" action="{!dummy}" rerender="pgsec1"/>
-                     </apex:selectList> 
+                     </apex:selectList> </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!if(voucherAmount!=null,true,false)}">

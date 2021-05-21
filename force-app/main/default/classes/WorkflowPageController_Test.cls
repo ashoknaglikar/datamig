@@ -205,7 +205,7 @@ private class WorkflowPageController_Test{
         
         appointment.Start__c=datetime.valueOf(startDate);
         appointment.End__c=datetime.valueOf(endDate);
-        
+        appointment.skill_number__c=10;
         insert appointment;
         System.debug('####**** appointment object---> '+appointment);
         

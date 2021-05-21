@@ -50,7 +50,7 @@ public class TestAppointmentUpdateWhenCancelled {
                                                      Status__c='Appointed',
                                                      Start__c = startt, End__c = endt, 
                                                      Visit_Type__c = 'First Visit', Type__c = 'Sales',
-                                                     Overbooked__c = false, Mode__c = 'SA', Opportunity__c= opp.Id, Who__c = contact.Id);
+                                                     Overbooked__c = false, Mode__c = 'SA', Opportunity__c= opp.Id, Who__c = contact.Id,skill_number__c=10);
         Database.SaveResult app = Database.Insert(firstApp);
         
         integer cntBefore = [select count() from Appointment__c where Start__c = :startt and end__c = :endt and Assigned_To__c = :empSv.getId()]; 

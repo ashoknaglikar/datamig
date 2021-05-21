@@ -184,13 +184,115 @@ global class createNPSFromVirtuatellBatch implements database.batchable<sobject>
                     
                     system.debug('Sugu' +apptList);
                     system.debug('Sugu' +jobList);
-                    system.debug('Sugu' +npsList);
+                    system.debug('Sugu' +npsList.size());
                     
+                    
+                    List<NPS__c> npsFinalList = new List<NPS__c>(npsList);
+                    
+                    string errortext = 'Error in inserting NPS Records. \n';
                     if(apptList.size()>0)
                         database.update(apptList.values(),false);
                     if(jobList.size()>0)
                         database.update(jobList.values(),false);
-                    if(!npsList.isEmpty())
-                        database.insert(new List<NPS__c>(npsList),false);
-                }
+                    if(!npsFinalList.isEmpty())
+                    {
+                        Database.SaveResult[] srList =  database.insert(npsFinalList,false);
+                       
+                        list<NPS__c> npsFailure = new list<NPS__c>();
+                        for (Integer i=0;i<srList.size();i++) 
+                        {
+                            if (!srList[i].isSuccess()) {
+                            Database.Error err = srList[i].getErrors()[0];
+                            errortext+='Error: '+err.getMessage()+' \n';
+                            npsFailure.add(npsFinalList[i]) ;
+                            }
+                        }
+                            
+                            if(!npsFailure.isEmpty())
+                            {
+                                errortext+='Response: '+reMapNPSToResponse(npsFailure);
+                                errors.add(errortext);
+                            }
+                     }
+    }
+    
+    public static String reMapNPSToResponse(List<NPS__c> npsFailure)
+    {
+        List<createNPSResponse> reslist = new List<createNPSResponse>();
+        
+                    for(NPS__c nps: npsFailure)
+                    {
+                        createNPSResponse res= new createNPSResponse();
+                        List<createNPSResponse.cResponses> cResList = new List<createNPSResponse.cResponses>();
+                        if(nps.Step1_Score_Dup__c!=null)
+                        {
+                            createNPSResponse.cResponses cRes = new createNPSResponse.cResponses();
+                            cRes.questionid='1365';
+                            cRes.response=String.valueof(nps.Step1_Score_Dup__c);
+                            cResList.add(cRes);
+                        }
+                        if(nps.Step2_Score__c!=null)
+                        {
+                            createNPSResponse.cResponses cRes = new createNPSResponse.cResponses();
+                            cRes.questionid='1777';
+                            cRes.response=String.valueof(nps.Step2_Score__c);
+                            cResList.add(cRes);
+                        }
+                        if(nps.Step1_Comments__c!=null)
+                        {
+                            createNPSResponse.cResponses cRes = new createNPSResponse.cResponses();
+                            cRes.questionid='1367';
+                            cRes.response=nps.Step1_Comments__c;
+                            cResList.add(cRes);
+                        }
+                        if(nps.Did_Installer_provide_safety_Advice__c!=null)
+                        {
+                            createNPSResponse.cResponses cRes = new createNPSResponse.cResponses();
+                            cRes.questionid='50292';
+                            cRes.response=nps.Did_Installer_provide_safety_Advice__c;
+                            cResList.add(cRes);
+                        }
+                        if(nps.Did_Installer_Called_after_installation__c!=null)
+                        {
+                            createNPSResponse.cResponses cRes = new createNPSResponse.cResponses();
+                            cRes.questionid='50294';
+                            cRes.response=nps.Did_Installer_Called_after_installation__c;
+                            cResList.add(cRes);
+                        }
+                         if(nps.job__c!=null)
+                        {
+                            createNPSResponse.cResponses cRes = new createNPSResponse.cResponses();
+                            cRes.questionid='50222';
+                            cRes.response=nps.job__c;
+                            cResList.add(cRes);
+                        }
+                         if(nps.Appointment__c!=null)
+                        {
+                            createNPSResponse.cResponses cRes = new createNPSResponse.cResponses();
+                            cRes.questionid='50224';
+                            cRes.response=nps.Appointment__c;
+                            cResList.add(cRes);
+                        }
+                        if(nps.CHI_Lead_Name__c!=null)
+                           res.reference=nps.CHI_Lead_Name__c;
+                           
+                        res.responses= new List<createNPSResponse.cResponses>(cResList);
+                        reslist.add(res);
+                    }
+                    
+                    
+                    String JSONres= JSON.serialize(reslist);
+                    system.debug(JSONres);
+                    return JSONres;
+                        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

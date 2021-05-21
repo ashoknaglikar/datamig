@@ -22,6 +22,7 @@ public class WorkflowPageController
     private MessageConstants errorMsg;
     String errMsg;
     String MessageFWA='';
+    public boolean isShowMsg{get;set;}
     
     
     //Changes for Wrap up Screen  starts bY Ashok G
@@ -55,6 +56,7 @@ public class WorkflowPageController
     
     public WorkflowPageController()
     {  
+        isShowMsg=false;
         WorkflowInfo = new Workflow.WorkflowInfo();
         List<PicklistWrapper> picVal = getPicklistValues();
         WorkflowInfo.picklistValues = picVal;
@@ -181,6 +183,12 @@ public class WorkflowPageController
             // MGM Change starts
             system.debug('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  WorkflowInfo.Opportunities'+WorkflowInfo.Opportunities);
             List<Opportunity> lstOpp = WorkflowInfo.Opportunities;
+            if(lstOpp!=null)
+            for(opportunity o :lstOpp)
+            {
+            if(o.Product_Interest__c=='Straight Swap')
+              isShowMsg=true;
+            }
             /*
 if(lstOpp!=null){
 if(lstOpp.size()==1 && lstOpp[0].ID!=null){

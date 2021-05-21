@@ -672,6 +672,9 @@ public class AppointmentToEventSynchronisation {
                     System.debug('updateAppointment: Appointment has been cancelled');
                     String AvailableRTID = Utilities.avRTID;
                     System.debug('updateAppointment: AvailableRTID: ' + AvailableRTID);
+                    System.debug('Sugu ' + newApp.Skill_number__c);
+                    System.debug('Sugu ' + newApp);
+                    System.debug('Sugu oldapp ' + oldApp);
                     
                     // CR for creating availability for cancelled apps starts here.
                     // CR for diary start end time changes.
@@ -683,8 +686,8 @@ public class AppointmentToEventSynchronisation {
                         
                     // Added visit type for avoiding validation failures
                     Appointment__c newAv = new Appointment__c(Assigned_To__c = newApp.Assigned_To__c, Start__c = newApp.Start__c, 
-                                            End__c = newApp.End__c, OwnerId = newApp.OwnerId,
-                                            Type__c = newApp.Type__c, Show_Time_As__c = 'Out Of Office',
+                                            End__c = newApp.End__c, OwnerId = newApp.OwnerId,Skill_Product_Interest__c=newApp.Skill_Product_Interest__c,
+                                            Type__c = newApp.Type__c, Show_Time_As__c = 'Out Of Office',Skill_number__c=newApp.Skill_number__c,
                                             RecordTypeId = AvailableRTID, Mode__c = newApp.Mode__c, Visit_Type__c = 'First Visit');
                                             
                     // ++ Priority appointment change start
@@ -703,6 +706,7 @@ public class AppointmentToEventSynchronisation {
                     // -- Priority appointment change end
                     
                     System.debug('updateAppointment: mode is ' + newAv.Mode__c);
+                     System.debug('Sugu ' + newAv);
                     newApptsFromCancellations.add(newAv);
                     
                     }

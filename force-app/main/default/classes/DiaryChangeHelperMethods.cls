@@ -1266,8 +1266,9 @@ satMap.put(week1.sat_PM_RoleWK1__c, startDate.addDays(finalweekDateforWeek1));
              {
                  newAPP = a.clone(true);
                  newAPP.Assigned_To__c = i;
-                 newApp.Appointment_Product_Interest__c= diaryChng.Shift_template__r.product_interest__c;
-                 //newApp.Skill_number__c = pi.Skill_number__c;
+                 newApp.Skill_Product_Interest__c= diaryChng.Shift_template__r.product_interest__c;
+                 if(pi!=null)
+                 newApp.Skill_number__c = pi.Skill_number__c;
                  finalList.add(newAPP);
              }
          }

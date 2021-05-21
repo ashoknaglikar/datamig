@@ -912,7 +912,7 @@ public static List<List<String>> findDistanceBetweenPostcodes(String origin, Str
         
          
         else if(system.label.Bing_Google_API=='Bing'){
-         if(street.containsIgnorecase('flat')||street.containsIgnorecase('apartment')||street.containsIgnorecase('apt'))
+         if(street!=null&&(street.containsIgnorecase('flat')||street.containsIgnorecase('apartment')||street.containsIgnorecase('apt')))
          street= null;
          
          
@@ -1273,5 +1273,11 @@ public static List<List<String>> findDistanceBetweenPostcodes(String origin, Str
         finally{
         }            
     } 
+    
+    public static Boolean runningInASandbox() {
+        return [SELECT Id, IsSandbox FROM Organization LIMIT 1].IsSandbox;
+    }
+    
+    
   
 }

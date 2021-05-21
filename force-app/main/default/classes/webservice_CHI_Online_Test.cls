@@ -564,7 +564,7 @@ private class webservice_CHI_Online_Test {
                                  Who__c = chi_account.Primary_Contact__c,
                                  Do_Not_Send_To_Premier__c = false,Mode__c='Installation',
                                  Resource_Type__c ='A',Sale_Flag__c = false,Show_Time_As__c= 'Out of Office',
-                                 Time_Band__c = 'AM',Status_Reason__c = 'Purchase Elsewhere', Status__c ='New',
+                                 Time_Band__c = 'AM',Status_Reason__c = 'Purchase Elsewhere', Status__c ='New',skill_number__c=10,
                                  Type__c = 'Sales');    
         
         insert app;

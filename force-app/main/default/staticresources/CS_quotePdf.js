@@ -51,9 +51,9 @@ var IFC_DATE_START = "2018-04-03";
 var IFC_DATE_END = "2050-12-31";
 var IFC_DATE_FINAL = "2050-12-31";
 
-var IFC_COVID_DATE_START = "2020-05-01";
-var IFC_COVID_DATE_END = "2020-08-31";
-var IFC_COVID_DATE_FINAL = "2020-12-31";
+var IFC_NEW_FINANCE_DATE_START = "2021-01-01";
+var IFC_NEW_FINANCE_DATE_END = "2021-03-31";
+var IFC_NEW_FINANCE_DATE_FINAL = "2021-05-31";
 
 //NEW added 3 July
 require(['bower_components/q/q'], function (Q) {
@@ -2205,9 +2205,9 @@ window.isEligibleForIFCNewOptions = function() {
     // get the quote creation date (or now())
     var quote_creation_date = Date.now();
 
-    var date_start_ms = dateToTimeMillis(IFC_COVID_DATE_START);
-    var date_end_ms = dateToTimeMillis(IFC_COVID_DATE_END);
-    var date_final_ms = dateToTimeMillis(IFC_COVID_DATE_FINAL);
+    var date_start_ms = dateToTimeMillis(IFC_NEW_FINANCE_DATE_START);
+    var date_end_ms = dateToTimeMillis(IFC_NEW_FINANCE_DATE_END);
+    var date_final_ms = dateToTimeMillis(IFC_NEW_FINANCE_DATE_FINAL);
     
     // check if the chi_lead_created_date is less than End Date
     // check if the quote creation date is greater than Start Date

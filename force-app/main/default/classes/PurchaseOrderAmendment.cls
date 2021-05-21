@@ -1544,31 +1544,17 @@ public class PurchaseOrderAmendment {
         }
         
         
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
         //Suguna
         isNDC= false;
         if (m_UnOrderedItem!=null) {
             for (underOrderedItem unAttendedItem:m_UnOrderedItem){
                 system.debug('Suguna '+unAttendedItem.sSupplierId);
                 if (unAttendedItem.sSupplierId!=null&&unAttendedItem.sSupplierId==system.label.SupplierNumber_NDC){
-=======
-        //Suguna
-        if (m_UnOrderedItem!=null) {
-            for (underOrderedItem unAttendedItem:m_UnOrderedItem){
-                system.debug('Suguna '+unAttendedItem.sSupplierId);
-                if (unAttendedItem.sSupplierId!=null&&unAttendedItem.sSupplierId=='6701'){
->>>>>>> 22a0978501ea0f25e116cfa595169e0287b9244a
                     isNDC=true;
                 }
             }
         }
         
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 22a0978501ea0f25e116cfa595169e0287b9244a
         
         try {
             // CR User defined ASP Starts
@@ -1871,6 +1857,7 @@ public class PurchaseOrderAmendment {
             String udp_branch_computed = 'No';
              //body +='\n Line 2 '+purchaseOrderList.size()+'\n';
             for (PurchaseOrder objPurchaseOrder : purchaseOrderList) {
+                system.debug('Sugu1 '+objPurchaseOrder);
                 suppBranchNumber = objPurchaseOrder.sSupplierBranchNum;
                 System.debug('Test SAP PO ==='+objPurchaseOrder);
                 if(objPurchaseOrder.sSupplierId != null && (objPurchaseOrder.sSupplierId).length() > 10){
@@ -2004,6 +1991,7 @@ public class PurchaseOrderAmendment {
             Schema.SObjectField s = Order_Line_Item__c.Fields.Sap_Number_Item_Code__c;
               System.debug('Rohit Test123 ==='+ orderLineItemLst);
             Database.upsert(orderLineItemLst, s,false);
+            //upsert orderLineItemLst;
              update jobElementLst;
             
             List<Job_Element__c> vanStockElementLst=new List<Job_Element__c>{};
@@ -2064,7 +2052,9 @@ public class PurchaseOrderAmendment {
          
         } catch(Exception ex) {
             Database.rollback(sp);
-            System.debug('%%%%%%%%%%%%%%%%%%%%%%%%%%%%% :' + ex.getMessage());
+            ApexPages.Message errMsg = new ApexPages.Message(ApexPages.Severity.ERROR, ex.getMessage()+'-'+ex.getlinenumber());
+            ApexPages.addMessage(errMsg);
+            System.debug('%%%%%%%%%%%%%%%%%%%%%%%%%%%%% :' + ex.getMessage()+'-'+ex.getlinenumber());
             return null;
         }
     }

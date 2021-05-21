@@ -263,6 +263,7 @@ private class AppointmentBeforeInsert_Test {
                                  Status_Reason__c = statusReason, Status__c = status,
                                  Time_Band__c = timeBand, Type__c = typeC,
                                  Visit_Type__c = visitType, Opportunity__c = opp.id,
+                                 Skill_number__c=10,
                                  Who__c = who);
                                  
     }

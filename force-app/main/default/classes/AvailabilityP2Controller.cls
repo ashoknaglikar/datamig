@@ -851,7 +851,7 @@ currentApp2Delete.Secondary_Cancellation_Reason__c= scr; // Ashok CR 12 End
                         and end_date__c >= :queryDate
                         and r.Role__r.Employee__r.Pool_Type__c = null
                         and r.Role__r.Employee__r.Primary_Role__c != 'Pool' 
-                        //and product_interest__c INCLUDES (:ToaProductInterest)
+                        and product_interest__c INCLUDES (:ToaProductInterest)
                         ORDER BY r.Role__r.Employee__c
                         limit :queryLimit]){
                             Emps.add(rleDistrict.Role__r.Employee__c);

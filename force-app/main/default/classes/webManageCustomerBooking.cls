@@ -1233,7 +1233,7 @@ public class webManageCustomerBooking {
                               AND end_date__c >= :appRec.End__c.date()
                               AND Role__r.Employee__r.Pool_Type__c = null
                               AND Role__r.Employee__r.Primary_Role__c != 'Pool'
-                              //and product_interest__c INCLUDES (:ToaProductInterest)
+                              and product_interest__c INCLUDES (:ToaProductInterest)
                               ORDER BY Role__r.Employee__c];
                       map<Id, List<List<Date>>> cEmpAvailMapPrimary = new map<Id, List<List<Date>>>();
                       map<Id, List<List<Date>>> cEmpAvailMapSecondary = new map<Id, List<List<Date>>>();

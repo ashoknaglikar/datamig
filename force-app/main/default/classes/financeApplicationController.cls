@@ -53,16 +53,37 @@ public class financeApplicationController {
     string AgreementNumber;
     string ExtRef;
     string oppId = '';
-   
+    public string TOF;
+    public string PayMethod;
+    public string DepositValue;
+    public string LoanPeriod;
+    public string InterestValue;
+    public string QuoteID;
+    public boolean isFromFlow;
     
     public list<Appointment__c> AppointmentList;
     
     public financeApplicationController( ApexPages.StandardController controller)
     {
+          //Suguna
+          isFromFlow=false;
+          TOF = ApexPages.currentPage().getParameters().get('TOF');
+          PayMethod = ApexPages.currentPage().getParameters().get('PayMethod');
+          DepositValue = ApexPages.currentPage().getParameters().get('DepositValue');
+          LoanPeriod = ApexPages.currentPage().getParameters().get('LoanPeriod');
+          InterestValue = ApexPages.currentPage().getParameters().get('InterestValue');
+          QuoteID = ApexPages.currentPage().getParameters().get('QuoteID');
+          
+          if(QuoteID!=null)
+          {
+            isFromFlow=true;
+            oppId = [select opportunity__c from BigMachines_Quote__c where id=:QuoteID].opportunity__c;
+          }
+          
         faTemp = new Finance_Application__c();
         financeProductsList = new list<SelectOption>();
         financeProductsList.add(new selectoption('', '--None--'));
-        for(Finance_Product__c financeProd : [Select Finance_options__c from Finance_Product__c where (Selectable__c = true OR salesforce__c=true) order by Order__c])
+        for(Finance_Product__c financeProd : [Select Finance_options__c from Finance_Product__c where salesforce__c=true order by Order__c])
         {
             financeProductsList.add(new selectoption(financeProd.Finance_options__c,financeProd.Finance_options__c ));
         }
@@ -186,10 +207,17 @@ public class financeApplicationController {
             if(!domestic)
             fa.RecordTypeId = RecordTypeIdHelper.getrecordTypeid('Finance_Application__c', 'Commercial');
             if(opp.Bigmachines_Quotes__r.size()>0)
-            {
-                //opp.Bigmachines_Quotes__r[0].Name = opp.Bigmachines_Quotes__r[0].Name.substring(0,opp.Bigmachines_Quotes__r[0].Name.length()-1)+'*';
-                //Bigmachines_Quote__c bQuote = new Bigmachines_Quote__c(name = 'C'+opp.CHI_Lead_Id__c+'*');
+            { 
                 fa.Portal_Quote__c = opp.Bigmachines_Quotes__r[0].Id;
+                if(isFromFlow)
+                {
+                   for(Bigmachines_Quote__c bm: opp.Bigmachines_Quotes__r)
+                   {
+                       if(QuoteID==bm.id)
+                       fa.Portal_Quote__c = bm.Id;
+                   }
+                }
+                
             }
             else
             fa.Quote_Number__c =  'C'+opp.CHI_Lead_Id__c+'0';
@@ -204,6 +232,14 @@ public class financeApplicationController {
        picklistFieldMaps = new Map<string, list<Finance_Data_Mappings__c>>();
         
        loadPicklist();
+       
+       if(isFromFlow)
+       {
+           calculateFinance();
+           getQuote();
+           startApplication();
+           fa.Type_of_Finance__c=TOF;
+       }
     }
     map<id, Finance_Product__c> fpMap;
     
@@ -220,7 +256,7 @@ public class financeApplicationController {
         financeProducts.add(new SelectOption('','-- None --'));
         
         // get active parent Products. 
-        for(Finance_Product__c f: [SELECT Name, Id, Interest_Rate__c, Payment_Options__c, Selling_Type__c, Promotional_period__c, Not_Available_For__c FROM Finance_Product__c where Active__c = true and (Selectable__c = true OR salesforce__c=true)])
+        for(Finance_Product__c f: [SELECT Name, Id, Interest_Rate__c, Payment_Options__c, Selling_Type__c, Promotional_period__c, Not_Available_For__c FROM Finance_Product__c where Active__c = true and salesforce__c=true])
         {
             if(opp!=null && f.Not_Available_For__c!= null &&  f.Not_Available_For__c.contains(opp.Product_Interest__c))
             {
@@ -275,7 +311,7 @@ public class financeApplicationController {
         {
         BigMachines_Quote__c b = [Select id, 	finalNetQuoteTotal__c, depositOnPricing__c from BigMachines_Quote__c where id = :fa.Portal_Quote__c];
         fa.Job_Total__c = b.finalNetQuoteTotal__c;
-        fa.Deposit__c = b.depositOnPricing__c;
+        fa.Deposit__c = DepositValue!=null?Decimal.valueof(DepositValue.remove('£')):b.depositOnPricing__c;
         fa.Cash_Price__c = fa.Job_Total__c - fa.Deposit__c;
         }
         productPanel = true;

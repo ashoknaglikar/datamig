@@ -1,25 +1,27 @@
-trigger updateIncompleteCommisionRptCount on Commissioning_Report__c (after insert,after update, before update) 
-{
-    
-    // ++ Added Priority Installations CR start
-    Map<Id,String> customerBoilerWorkingInfoMap = new Map<Id,String>();
-    List<Opportunity> oppListForBoilerWorking = new List<Opportunity>();
-    map<string, string> cocStatusMap = new Map<string, string>();
-    map<Id, String> CocStatus = new map<id, string>();
+/*
+    Date: 22/03/2021 
+    Change : Added functionality to recal the GPS hours on existing jobs where its null at the end of the job.
+*/
+trigger updateIncompleteCommisionRptCount on Commissioning_Report__c(
+  after insert,
+  after update,
+  before update
+) {
+  // ++ Added Priority Installations CR start
+  Map<Id, String> customerBoilerWorkingInfoMap = new Map<Id, String>();
+  List<Opportunity> oppListForBoilerWorking = new List<Opportunity>();
+  map<string, string> cocStatusMap = new Map<string, string>();
+  map<Id, String> CocStatus = new Map<id, string>();
 
-    Id gasCommReportRecordTypeId = null;
-    // ++ Added Priority Installations CR end
-    
-if(Trigger.isafter && Trigger.isupdate)
- {
-    for(Integer i =0; i < Trigger.new.size(); i++)
-     {
-       
-       if(Trigger.new[i].RecordTypeName__c.contains('Gas'))
-      {
-            
+  Id gasCommReportRecordTypeId = null;
+  // ++ Added Priority Installations CR end
+  list<Id> gpsJobListId = new List<Id>();
+  if (Trigger.isafter && Trigger.isupdate) {
+    for (Integer i = 0; i < Trigger.new.size(); i++) {
+      if (Trigger.new[i].RecordTypeName__c.contains('Gas')) {
+        gpsJobListId.add(Trigger.new[i].Job_Number__c);
 
-        if(Trigger.new[i].Status__c == 'Completed' && Trigger.old[i].Status__c != 'Completed')
+        /* if(Trigger.new[i].Status__c == 'Completed' && Trigger.old[i].Status__c != 'Completed')
         {
             if(Trigger.new[i].GD_Claims_of_conformity__c !=null)
                 {
@@ -38,12 +40,51 @@ if(Trigger.isafter && Trigger.isupdate)
                         cocStatusMap.put(Trigger.new[i].CHILeadId__c , 'No');
                     }
                 }
- 
-        }
-      }
 
-}
-      List<Green_Deal_Measures__c> updatingGDM = new List<Green_Deal_Measures__c>();
+             
+ 
+        } */
+      }
+    }
+  }
+
+  if (gpsJobListId.size() > 0) {
+    list<Job__c> jobList = [
+      SELECT
+        id,
+        Installation_Type__c,
+        Boiler_Location__c,
+        Total_Hours__c,
+        Balancing_Skill__c,
+        Secondary_Job_Type_New__c
+      FROM Job__c
+      WHERE Id IN :gpsJobListId AND GPS_Hours__c = NULL
+    ];
+    //Calculte GPS at the end of the Job.
+    if (jobList.size() > 0 && jobList[0].Secondary_Job_Type_New__c == null) {
+      jobList = jobTriggerHelper.calculateBalancingMechanicalHoursReturnJobs(
+        jobList,
+        false
+      );
+      update jobList;
+      
+     if (label.CTAPUpdateSwitch == 'on') {
+      set<Week__c> updateList = new set<Week__c>();
+      for (Diary_Entry__c de : [
+        SELECT id, Week__c
+        FROM Diary_Entry__c
+        WHERE Job__c = :jobList[0].Id AND Sub_Type__c = 'Mechanical'
+      ]) {
+        updateList.add(
+          new Week__c(id = de.Week__c, Generate_WorkDays__c = true)
+        );
+      }
+      update new list<Week__c>(updateList);
+    }
+    }
+    
+  }
+  /* List<Green_Deal_Measures__c> updatingGDM = new List<Green_Deal_Measures__c>();
       if(cocStatusMap.keyset().size()>0)
       {
         for(Green_Deal_Measures__c gdm : [select id, COCRecieved__c , CHILeadId__c from Green_Deal_Measures__c where CHILeadId__c in :cocStatusMap.keyset() and Recommended_measure__c = 'Condensing Boilers'])
@@ -53,9 +94,9 @@ if(Trigger.isafter && Trigger.isupdate)
         }
         if(updatingGDM.size()>0)
         update updatingGDM;
-      }  
-}    
-   
+      }   
+}    */
+
  if(Trigger.isUpdate)
  {
     if(trigger.isbefore)
@@ -69,7 +110,7 @@ if(Trigger.isafter && Trigger.isupdate)
                 completedDocs.add(c.id);
             }
         }
-        set<Id> jcdWithCoc = new set<Id>();
+        /* set<Id> jcdWithCoc = new set<Id>();
         if(completedDocs.size()>0)
         {
             
@@ -84,7 +125,7 @@ if(Trigger.isafter && Trigger.isupdate)
                     c.adderror('There are no Claims of Conformity document present.');
                 }
             }
-        }
+        } */
     }
    try {
         System.debug('@cls id run @'+cls_IsRun.isJobCompletion);
@@ -132,8 +173,9 @@ if(Trigger.isafter && Trigger.isupdate)
     } catch (Exception ex) {
         System.debug('Exception  : '+ex.getMessage());
     }
- }// Added as part of customer history card change request. 
-  /*else if(Trigger.isInsert)
+ } 
+  // Added as part of customer history card change request.
+  else if(Trigger.isInsert)
   {
      try{
         Set<Id> set_JobId=new Set<Id>{};
@@ -161,6 +203,5 @@ if(Trigger.isafter && Trigger.isupdate)
     }catch(Exception ex){
         System.debug('Exception  : '+ex.getMessage());
     }
- }*/
- 
+ }
 }

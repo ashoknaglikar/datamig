@@ -121,7 +121,7 @@ private class aUPD_AutocancelAppointmentQuoteCanc_test {
                                  Do_Not_Send_To_Premier__c = false,Mode__c='Installation',Overbooked__c = true,
                                  Resource_Type__c ='A',Sale_Flag__c = false,Show_Time_As__c= 'Busy',Time_Band__c = 'AM',Visit_Type__c ='First Visit',
                                  Status_Reason__c = 'Purchase Elsewhere', Status__c ='New',
-                                 Type__c = 'Sales', Opportunity__c = opty.id,
+                                 Type__c = 'Sales', Opportunity__c = opty.id,skill_number__c=10,
                                   Who__c = who
                                  );	
                                  	                                 

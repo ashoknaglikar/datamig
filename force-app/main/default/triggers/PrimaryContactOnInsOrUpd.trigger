@@ -40,7 +40,9 @@ if (!System.Trigger.isDelete)
     
     } // for new contact
     
-    accountsToUpd = [Select a.id,a.Primary_Contact__c from Account a 
+    if(accountContactMap.size()>0)
+    {
+        accountsToUpd = [Select a.id,a.Primary_Contact__c from Account a 
                                          where a.id in :accountContactMap.keySet()] ;
                                          
         for (Account accToUpd : accountsToUpd)
@@ -53,6 +55,7 @@ if (!System.Trigger.isDelete)
 	                accToUpd.Primary_Contact__c = accountContactMap.get(accToUpd.Id).Id;
         	}
         }
+    }
         
       if(accountlandlordMap.size()>0)
       {
@@ -81,7 +84,8 @@ if (!System.Trigger.isDelete)
       		update updateList;
       	}
       }  
-        
+      if(accountContactMap.keySet().size()>0)
+      {
         contactsToUpd = [Select c.id, c.Primary_Contact__c, c.AccountId from Contact c 
                 where  c.AccountId in :accountContactMap.keySet()  and  c.Primary_Contact__c =true
                 and c.Id not in :Trigger.newMap.keySet()];
@@ -93,6 +97,7 @@ if (!System.Trigger.isDelete)
                                                                             == contact.AccountId)))
                 contact.Primary_Contact__c=false;
         }
+      }
         
       if (contactsToUpd!=null && !contactsToUpd.isEmpty())
      Database.update(contactsToUpd);

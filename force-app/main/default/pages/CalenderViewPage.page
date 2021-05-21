@@ -1,0 +1,53 @@
+<apex:page controller="CalenderViewController" showHeader="false" sidebar="false">
+<html>
+<head>
+    <script src="/js/functions.js"></script>
+    <script src="/soap/ajax/17.0/connection.js"></script>
+    <script src="/soap/ajax/17.0/apex.js"></script>
+</head>
+<apex:form id="myform">
+<body>
+<apex:pageBlock title="Calendar">
+       
+        <apex:outputpanel >
+        <table>
+            <tr>
+                <td>
+                    <label><b>Start Date :</b></label>
+                </td>
+                <td>
+                    <apex:inputField value="{!opp.Actual_Call_Back_Date__c}">&nbsp;<apex:commandButton value="Search" action="{!search}" rerender="myform"/></apex:inputField>
+                </td>
+            </tr>
+        </table> 
+      </apex:outputpanel> <br/>
+      
+      
+      <apex:pageBlockSection >
+      <apex:repeat value="{!eveWrapList}" var="eveDay">
+          <apex:outputText style="font-weight:bold;" value="{!eveDay.day}"/><br/>
+          <apex:repeat value="{!eveDay.events}" var="eve">
+                    <apex:outputpanel layout="block" style="color:grey;">
+                    <apex:outputpanel layout="block" styleClass="requiredBlock"></apex:outputpanel>
+              <apex:outputText >{!eve.timeslot}&nbsp; <a href="/{!eve.even.appointmentID__c}"
+id="lookup{!eve.even.appointmentID__c}"
+onblur="LookupHoverDetail.getHover('lookup{!eve.even.appointmentID__c}').hide();"
+onfocus="LookupHoverDetail.getHover('lookup{!eve.even.appointmentID__c}', '/{!eve.even.appointmentID__c}/m?retURL=/{!eve.even.appointmentID__c}&isAjaxRequest=1').show();"
+onmouseout="LookupHoverDetail.getHover('lookup{!eve.even.appointmentID__c}').hide();"
+onmouseover="LookupHoverDetail.getHover('lookup{!eve.even.appointmentID__c}', '/{!eve.even.appointmentID__c}/m?retURL=/{!eve.even.appointmentID__c}&isAjaxRequest=1').show();">
+{!eve.even.subject}
+</a></apex:outputText></apex:outputpanel><br/>
+             
+         </apex:repeat>
+      </apex:repeat>
+      </apex:pageBlockSection>
+      
+      <apex:outputPanel rendered="IF(eveWrapList.size>0,false,true)">
+          <p>No results.</p>
+       </apex:outputPanel>     
+    </apex:pageBlock>
+    </body>
+   </apex:form>
+   
+   </html>
+</apex:page>

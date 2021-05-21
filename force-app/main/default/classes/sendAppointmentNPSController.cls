@@ -8,7 +8,7 @@ public class sendAppointmentNPSController {
         if(apptId!=null)
         {
            apptList = [Select id,name,Opportunity__c,Opportunity__r.CHI_Lead_Id__c,Customer_Email_Address__c,Assigned_To__r.Name,Assigned_To__r.Employee_Number__c,Date_Visit_Booked__c,Who__r.FirstName,Who__r.LastName,Who__r.Title,Who__r.MailingCountry,
-                       Trading_Name__c,cs_productInterest__c,Contact_Mobile__c,Contact_Home_Phone__c,NPS_notification_status__c from Appointment__c where id=:apptId];
+                       Trading_Name__c,cs_productInterest__c,Contact_Mobile__c,Contact_Home_Phone__c,Contact_Best_Phone__c,NPS_notification_status__c from Appointment__c where id=:apptId];
         }
 
     }

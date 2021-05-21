@@ -102,7 +102,7 @@ public with sharing class TestClassHelper {
                                  Sale_Flag__c = true, Show_Time_As__c = 'Busy',
                                  Status_Reason__c = 'INFORMATION PROVIDED', Status__c = 'Appointed',
                                  Time_Band__c = 'AM', Type__c = 'Sales',
-                                 Visit_Type__c = 'First Visit', Opportunity__c = opp.id,
+                                 Visit_Type__c = 'First Visit', Opportunity__c = opp.id,skill_number__c=10,
                                  Who__c = who);
         return app;
     }

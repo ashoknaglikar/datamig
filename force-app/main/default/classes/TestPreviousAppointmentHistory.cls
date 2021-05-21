@@ -113,7 +113,7 @@ public class TestPreviousAppointmentHistory {
                      RecordTypeId = recordTypeId,
                      Show_Time_As__c = 'Busy', Status__c = 'Appointed',
                      Type__c = 'Sales', Opportunity__c = oppId, 
-                     Visit_Type__c = 'First Visit',
+                     Visit_Type__c = 'First Visit',skill_number__c=10,
                      Status_Reason__c = 'RAISED IN FAVOUR', Who__c = contactId);                
             return app;
         }

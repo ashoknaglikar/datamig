@@ -113,6 +113,11 @@ public class CopyQuoteExtension {
              ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Billing Reference Number must be of 11 characters length and always start with number 8.'));
              return null;
         }
+        if(selectedDepositMethod==null ||selectedDepositMethod=='')
+        {
+             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Deposit Payment Type: You must enter a value')); 
+             return null;
+        }
         if((selectedDepositMethod=='Credit Card'||selectedDepositMethod=='Debit Card')&&(leadPayment.EPDQ_Authorisation__c==null||leadPayment.EPDQ_Authorisation__c==''))
         {
              ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'EPDQ Reference Number: You must enter a value')); 

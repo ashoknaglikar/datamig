@@ -38,12 +38,12 @@ private class TestApptHistBeforeInsertAndUpdate {
                 
         Appointment__c app1 = new Appointment__c(Start__c = startTime, End__c = endTime,type__c = 'Sales',
                                                 Subject__c = 'test extract flag appt',
-                                                Opportunity__c = opp.Id, Status__c = 'Appointed',
+                                                Opportunity__c = opp.Id, Status__c = 'Appointed',skill_number__c=10,
                                                 Who__c = contact.Id, RecordTypeId = s.appointmentApptRecTypeId);
         
         Appointment__c app2 = new Appointment__c(Start__c = startTime+2, End__c = endTime+2,type__c = 'Survey',
                                                 Subject__c = 'test extract flag appt',
-                                                Opportunity__c = opp.Id, Status__c = 'Appointed',
+                                                Opportunity__c = opp.Id, Status__c = 'Appointed',skill_number__c=10,
                                                 Who__c = contact.Id, RecordTypeId = s.appointmentApptRecTypeId);
         
 

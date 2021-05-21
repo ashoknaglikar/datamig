@@ -38,7 +38,7 @@ public class SurveyTriggerDataBatch_Test {
                               Employee_Number__c = '0002991');
         insert emp;
         
-        appointment = new Appointment__c(Opportunity__c=opp.id,who__c=con.id,Type__c='Sales', Start__c =system.now(), Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=system.now().addhours(2), Assigned_To__c=emp.Id,NPS_Notification_Status__c='Ready to be Sent');
+        appointment = new Appointment__c(Opportunity__c=opp.id,who__c=con.id,Type__c='Sales', Start__c =system.now(), Show_Time_As__c='Out Of Office', RecordTypeId = availableRecordTypeId, End__c=system.now().addhours(2), Assigned_To__c=emp.Id,NPS_Notification_Status__c='Ready to be Sent',skill_number__c=10);
         insert appointment;
         
         week__c week = new week__c(employee__c=emp.id);

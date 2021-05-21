@@ -165,7 +165,7 @@ private class WorkflowHelper_Test{
         
         appointment.Start__c=datetime.valueOf(startDate);
         appointment.End__c=datetime.valueOf(endDate);
-        
+        appointment.skill_number__c=10;
         insert appointment;
         System.debug('###*** appointment object---> '+appointment);
         
@@ -376,7 +376,7 @@ private class WorkflowHelper_Test{
         WorkflowHelper.ValidateContact(info);
         test.stoptest();
         
-        Bundle__c bundle = new Bundle__c(Reference_Code__c='001',name= 'EICR');
+        Bundle__c bundle = new Bundle__c(Reference_Code__c='001',name= 'EICR',EICR__c=true);
         insert bundle;
         
         CS_VAT_Code__c vatcode= new CS_VAT_Code__c(name='test vatcode',Percentage__c=20);
@@ -391,9 +391,14 @@ private class WorkflowHelper_Test{
         Bundle_Part__c bunPart = new Bundle_Part__c(Bundle__c= bundle.id,CS_Part__c=csPart.id,Price__c=2299.00,Quantity__c=1);
         insert bunPart;
         
+        try{
         opportunity1.bundle_product__c=bundle.id;
         update opportunity1;
         WorkflowHelper.createBmQuoteAndJob(opportunity1);
+        }catch(Exception e)
+        {
+        
+        }
         
         /*      
         info.Opportunities=opportunityListNew;

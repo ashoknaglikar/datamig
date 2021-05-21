@@ -40,8 +40,11 @@ private class AutoPrdBatchClassTest {
         insert con;
     
         opportunity opp = TestclassHelper.createCHILead(acc);
+        opp.payment_reference_number__c='81234567000';
         opportunity opp1 = TestclassHelper.createCHILead(acc);
+        opp1.payment_reference_number__c='81234567111';
         opportunity opp2 = TestclassHelper.createCHILead(acc);
+        opp2.payment_reference_number__c='81234567222';
         oppList = new List<opportunity>{opp,opp1,opp2};
         insert opplist;
          

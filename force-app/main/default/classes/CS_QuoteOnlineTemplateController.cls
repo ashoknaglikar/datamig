@@ -23,7 +23,7 @@ public class CS_QuoteOnlineTemplateController {
     public Id oppId {get;set;}
     public String logoType {get;set;}
     public string boilerPlusReason{get;set;}
-	public static final String TEMP_ONLINE_QUOTE_ATT_NAME = 'TEMP_ONL_Q.HTML';
+  public static final String TEMP_ONLINE_QUOTE_ATT_NAME = 'TEMP_ONL_Q.HTML';
     public List<Attachment> attList {get; set;}
 
     // apr change 
@@ -318,23 +318,31 @@ public class CS_QuoteOnlineTemplateController {
         }   
     }
        
-    public class PDFQuoteLineItem {
+    public class PDFQuoteLineItem implements Comparable {
         public String name {get; set;}
         public String quantity {get; set;}      
         public String price {get; set;}
         public Id id {get; set;}
-        
+        public decimal priceDeci{get;set;}
         
         public PDFQuoteLineItem(String itemName, Decimal itemQuantity, String itemPrice, Id id) {
-            name = itemName;
+            this.name = itemName;
             this.id = id;
             if (itemQuantity != 1) {
                 quantity = '(x' + itemQuantity + ')';
             } else {
                 quantity = ' ';
             }
-            price = itemPrice;
-        }       
+            this.price = itemPrice;
+            this.priceDeci= (itemPrice!=null&&itemprice.contains('£'))?decimal.valueof(itemPrice.replaceAll('[£,]','')):0;
+        }
+        
+        public Integer compareTo(Object compareTo) {
+            PDFQuoteLineItem compareToEmp = (PDFQuoteLineItem)compareTo;
+            if (priceDeci > compareToEmp.priceDeci) return -1;
+            if (priceDeci < compareToEmp.priceDeci) return 1;
+            return 0; 
+        }   
     }
     
     public class PDFQuoteDetailSection {
@@ -362,7 +370,7 @@ public class CS_QuoteOnlineTemplateController {
         Date quoteDate =  quoteCreatedDate;
        
         if(chi_lead_created_date!=null){
-        CS_Promotion_Dates__c dp = CS_Promotion_Dates__c.getInstance('30 Months IFC');
+        CS_Promotion_Dates__c dp = CS_Promotion_Dates__c.getInstance('36 Months IFC');
         date dp_date_start = dp.Start_Date__c;
         date dp_date_end = dp.End_Date__c;
         date dp_date_final = dp.Final_Date__c;
@@ -373,19 +381,27 @@ public class CS_QuoteOnlineTemplateController {
         system.debug('dp_date_end '+dp_date_end);
         if(quoteDate >= dp_date_start && quoteDate <= dp_date_final && leadCreatedDate <= dp_date_end)
         {
-            wayToPayVersion=1;
+            wayToPayVersion=3;
             
         }
         else
         {
-          dp = CS_Promotion_Dates__c.getInstance('IFC 3 Months Deferred');
+          dp = CS_Promotion_Dates__c.getInstance('30 Months IFC');
           dp_date_start = dp.Start_Date__c;
           dp_date_end= dp.End_Date__c;
           dp_date_final= dp.Final_Date__c;
           if(quoteDate >= dp_date_start && quoteDate <= dp_date_final && leadCreatedDate <= dp_date_end)
-          wayToPayVersion=2;
+          wayToPayVersion=1;
+          else
+          {
+               dp = CS_Promotion_Dates__c.getInstance('IFC 3 Months Deferred');
+               dp_date_start = dp.Start_Date__c;
+               dp_date_end= dp.End_Date__c;
+               dp_date_final= dp.Final_Date__c;
+               if(quoteDate >= dp_date_start && quoteDate <= dp_date_final && leadCreatedDate <= dp_date_end)
+               wayToPayVersion=2;
+          }
         } 
-        
         system.debug('waytopayversion '+waytopayversion);
     }
     }
@@ -665,29 +681,29 @@ public class CS_QuoteOnlineTemplateController {
         }
         /*
         if (inputQuoteData.chi_lead_created_date != null &&
-        	CS_Promotion_Dates__c.getInstance('Interest Free Credit') != null) {
+          CS_Promotion_Dates__c.getInstance('Interest Free Credit') != null) {
 
-		        System.debug('////Raw chi_lead_created_date: ' + inputQuoteData.chi_lead_created_date);
-		         // determine interest free loan start and end dates from custom settings
-		        Date ifc_date_start = CS_Promotion_Dates__c.getInstance('Interest Free Credit').Start_Date__c;
-		        Date ifc_date_end = CS_Promotion_Dates__c.getInstance('Interest Free Credit').End_Date__c;
-		        Date ifc_date_final = CS_Promotion_Dates__c.getInstance('Interest Free Credit').Final_Date__c;
-		        Date leadCreatedDate = Date.newInstance(inputQuoteData.chi_lead_created_date.year(),
-		        							inputQuoteData.chi_lead_created_date.month(),
-		        							inputQuoteData.chi_lead_created_date.day());
-		        Date quoteDate =  Date.newInstance(quoteCreatedDate.year(), quoteCreatedDate.month(), quoteCreatedDate.day());
-		        System.debug('////IFC Start date: ' + ifc_date_start);
-		        System.debug('////IFC End date  : ' + ifc_date_end);
-		        System.debug('////Quote date    : ' + quoteDate);
-		        System.debug('////CHI Lead c.dt.: ' + leadCreatedDate);
+            System.debug('////Raw chi_lead_created_date: ' + inputQuoteData.chi_lead_created_date);
+             // determine interest free loan start and end dates from custom settings
+            Date ifc_date_start = CS_Promotion_Dates__c.getInstance('Interest Free Credit').Start_Date__c;
+            Date ifc_date_end = CS_Promotion_Dates__c.getInstance('Interest Free Credit').End_Date__c;
+            Date ifc_date_final = CS_Promotion_Dates__c.getInstance('Interest Free Credit').Final_Date__c;
+            Date leadCreatedDate = Date.newInstance(inputQuoteData.chi_lead_created_date.year(),
+                          inputQuoteData.chi_lead_created_date.month(),
+                          inputQuoteData.chi_lead_created_date.day());
+            Date quoteDate =  Date.newInstance(quoteCreatedDate.year(), quoteCreatedDate.month(), quoteCreatedDate.day());
+            System.debug('////IFC Start date: ' + ifc_date_start);
+            System.debug('////IFC End date  : ' + ifc_date_end);
+            System.debug('////Quote date    : ' + quoteDate);
+            System.debug('////CHI Lead c.dt.: ' + leadCreatedDate);
 
-		        is_ifc_active = (quoteDate >= ifc_date_start && 
-		        				 quoteDate <= ifc_date_final &&
-		        				 leadCreatedDate <= ifc_date_end);
-		        System.debug('////IFC quote will be shown? ' + is_ifc_active);
+            is_ifc_active = (quoteDate >= ifc_date_start && 
+                     quoteDate <= ifc_date_final &&
+                     leadCreatedDate <= ifc_date_end);
+            System.debug('////IFC quote will be shown? ' + is_ifc_active);
 
         } else {
-        	is_ifc_active = false;
+          is_ifc_active = false;
         }*/
         
         
@@ -841,6 +857,10 @@ public class CS_QuoteOnlineTemplateController {
             PDFQuoteLineItem item = new PDFQuoteLineItem(adaptStringForOutput(li.Description), li.Quantity, formatPriceWithCommaDecimal(li.Total), li.lineItemId);
             section.items.add(item);
         }
+        if(section.title.contains('installation and associated work'))
+        {
+           section.items.sort(); 
+        }
             
     }
     
@@ -880,7 +900,7 @@ public class CS_QuoteOnlineTemplateController {
         }
         System.debug('sasa:: partsModelMap: ' + JSON.serialize(partsModelMap));
         System.debug('sasa:: pdfQuoteDetail: ' + JSON.serialize(pdfQuoteDetail));
-		System.debug('sasa:: quoteItems: ' + JSON.serialize(quoteItems));
+    System.debug('sasa:: quoteItems: ' + JSON.serialize(quoteItems));
     }
     
     private static String adaptStringForOutput(String input) {
@@ -910,55 +930,55 @@ public class CS_QuoteOnlineTemplateController {
     
     private String returnPaymentMonthly(Decimal amount, decimal term, decimal aprDecimal) {  
         system.debug('aprDecimal-->'+aprDecimal);
-    	Decimal monthlyPayment = (amount / (term*12)).setScale(2, RoundingMode.HALF_UP);
-    	// return payment is equally divided by 24 (months) if the term is 2 years
+      Decimal monthlyPayment = (amount / (term*12)).setScale(2, RoundingMode.HALF_UP);
+      // return payment is equally divided by 24 (months) if the term is 2 years
 
-    	if (term > 2 && aprDecimal>0) {
-	        Integer numOfMonths = 12;
-	        //Decimal annualInterestRate = 0.149;
+      if (term > 2 && aprDecimal>0) {
+          Integer numOfMonths = 12;
+          //Decimal annualInterestRate = 0.149;
             Decimal annualInterestRate = aprDecimal;
-	        Decimal oneMonth = 1.00;
-	        oneMonth = oneMonth.divide(12.00, 7);
-	        Decimal monthlyInterestRate = (Math.exp(oneMonth*Math.log(1 + annualInterestRate)) - 1).setScale(7);
-	        
-	        Decimal value1 = amount * monthlyInterestRate;
-	        
-	        Decimal value2 = Math.exp(-1*numOfMonths*term*Math.log(1 + monthlyInterestRate));
-	        
-	        Decimal value3 = 1 - value2;
+          Decimal oneMonth = 1.00;
+          oneMonth = oneMonth.divide(12.00, 7);
+          Decimal monthlyInterestRate = (Math.exp(oneMonth*Math.log(1 + annualInterestRate)) - 1).setScale(7);
+          
+          Decimal value1 = amount * monthlyInterestRate;
+          
+          Decimal value2 = Math.exp(-1*numOfMonths*term*Math.log(1 + monthlyInterestRate));
+          
+          Decimal value3 = 1 - value2;
 
-	        monthlyPayment = 0.00;
-	        if(value3!=0){
-	           monthlyPayment =  (value1 / value3).setScale(2, RoundingMode.HALF_UP);        
-	        }
-	    } 
+          monthlyPayment = 0.00;
+          if(value3!=0){
+             monthlyPayment =  (value1 / value3).setScale(2, RoundingMode.HALF_UP);        
+          }
+      } 
 
         return '£'+monthlyPayment;
     }
     
     private String returnTotalAmount(Decimal amount, decimal term, decimal aprDecimal) {
         system.debug('aprDecimal-->'+aprDecimal);
-    	Decimal totalAmountRepayable = amount.setScale(0);
-    	// repayable amount is the same as the amount for 2-year interest free credit
-    	if (term > 2 && aprDecimal>0) {
-	        Integer numOfMonths = 12;
-	        //Decimal annualInterestRate = 0.149;
+      Decimal totalAmountRepayable = amount.setScale(0);
+      // repayable amount is the same as the amount for 2-year interest free credit
+      if (term > 2 && aprDecimal>0) {
+          Integer numOfMonths = 12;
+          //Decimal annualInterestRate = 0.149;
             Decimal annualInterestRate = aprDecimal;
-	        Decimal oneMonth = 1.00;
-	        oneMonth = oneMonth.divide(12.00, 7);
-	        Decimal monthlyInterestRate = (math.exp(oneMonth*math.log(1 + annualInterestRate)) - 1).setScale(7);
-	            
-	        Decimal value1 = amount * monthlyInterestRate;
-	        Decimal value2 = math.exp(-1*numOfMonths*term*math.log(1 + monthlyInterestRate));
-	        Decimal value3 = 1 - value2;
+          Decimal oneMonth = 1.00;
+          oneMonth = oneMonth.divide(12.00, 7);
+          Decimal monthlyInterestRate = (math.exp(oneMonth*math.log(1 + annualInterestRate)) - 1).setScale(7);
+              
+          Decimal value1 = amount * monthlyInterestRate;
+          Decimal value2 = math.exp(-1*numOfMonths*term*math.log(1 + monthlyInterestRate));
+          Decimal value3 = 1 - value2;
 
-	        Decimal monthlyPayment = 0.00;
-	        if(value3!=0){
-	           monthlyPayment =  (value1 / value3).setScale(2, RoundingMode.HALF_UP);
-	        }
+          Decimal monthlyPayment = 0.00;
+          if(value3!=0){
+             monthlyPayment =  (value1 / value3).setScale(2, RoundingMode.HALF_UP);
+          }
 
-	        totalAmountRepayable = (monthlyPayment*numOfMonths*term).setScale(0);
-	    }
+          totalAmountRepayable = (monthlyPayment*numOfMonths*term).setScale(0);
+      }
 
         return formatPriceAsWholeNumber(totalAmountRepayable);
     }
@@ -1560,22 +1580,22 @@ public class CS_QuoteOnlineTemplateController {
                                 /*
                                 if (af.Name == 'AllowanceDescription') {
                                     if (af.cscfga__Value__c != null) {
-										 allowanceDesc = af.cscfga__Value__c;
-										 if(allowanceDesc.contains('Energy £300 Credit'))
-										 {
-										    isShowTermsConditions = true;
-										    showEnergyTC = true;
-										    allowanceDesc = allowanceDesc + ' ref:'+energryAccountRef;
-										 }
-										 
-										 // Add 26/11/18 for gift card changes
-										 if (allowanceDesc!=null && label.Cloudsense_Gift_Card_T_Cs.contains(allowanceDesc))
-										 {
-										     isShowTermsConditions = true;
-										     showGiftCardAllowanceTC = true;
-										 }
-										 
-									}
+                     allowanceDesc = af.cscfga__Value__c;
+                     if(allowanceDesc.contains('Energy £300 Credit'))
+                     {
+                        isShowTermsConditions = true;
+                        showEnergyTC = true;
+                        allowanceDesc = allowanceDesc + ' ref:'+energryAccountRef;
+                     }
+                     
+                     // Add 26/11/18 for gift card changes
+                     if (allowanceDesc!=null && label.Cloudsense_Gift_Card_T_Cs.contains(allowanceDesc))
+                     {
+                         isShowTermsConditions = true;
+                         showGiftCardAllowanceTC = true;
+                     }
+                     
+                  }
                                 }*/ if (af.Name == 'Code' && af.cscfga__Value__c!=null) {
                                     
                                         code= af.cscfga__Value__c;
@@ -1609,7 +1629,7 @@ public class CS_QuoteOnlineTemplateController {
 
         if (allowanceCodeList.size() > 0) {
             tandcs = '';
-            for(CS_allowance__c aw : [Select id , Name , Allowance_Code__c, Requires_Billing_Ref__c,	Quote_Description__c , 	T_C_s__c from CS_allowance__c where Allowance_Code__c in :allowanceCodeList.keyset()])
+            for(CS_allowance__c aw : [Select id , Name , Allowance_Code__c, Requires_Billing_Ref__c,  Quote_Description__c ,   T_C_s__c from CS_allowance__c where Allowance_Code__c in :allowanceCodeList.keyset()])
             {
                 string description  = aw.Quote_Description__c;
                 
@@ -1626,8 +1646,8 @@ public class CS_QuoteOnlineTemplateController {
                 if(aw.T_C_s__c!=null)
                 {
                     isShowTermsConditions = true;
-				    //showEnergyTC = true;
-				    tandcs += aw.T_C_s__c.replaceall('brandName',summaryTableHeading);
+            //showEnergyTC = true;
+            tandcs += aw.T_C_s__c.replaceall('brandName',summaryTableHeading);
                 }
                 
                 
@@ -2123,36 +2143,36 @@ public class CS_QuoteOnlineTemplateController {
         return amount;
     }
 
-	 public PageReference displayPDF(){
+   public PageReference displayPDF(){
         
         Attachment att;
 
-		// check if there already is attachment 
+    // check if there already is attachment 
 
-		// there are two cases:
-		// (1) The quote is being generated after the basket is created
-		// (2) The quote is being generated before the basket is created
+    // there are two cases:
+    // (1) The quote is being generated after the basket is created
+    // (2) The quote is being generated before the basket is created
 
-		// case (1): we have basket ID so we'll use it as attachment parent id
-		// first check if there already is some html attachment (there shouldn't be, but if there is, we'll overwrite it)
-		// ultimately it doesn't matter which parent id we'll use, because we'll send the actual attachment ID to the 
-		// actual PDF rendering page
+    // case (1): we have basket ID so we'll use it as attachment parent id
+    // first check if there already is some html attachment (there shouldn't be, but if there is, we'll overwrite it)
+    // ultimately it doesn't matter which parent id we'll use, because we'll send the actual attachment ID to the 
+    // actual PDF rendering page
 
-		Id parentId;
-		// we know that we are generating pdf before attachment by the fact we have oppId set (see line 379)
-		if (oppId != null) {
-			parentId = oppId;
-		// otherwise we have a basket
-		} else {
-			parentId = basketId;
-		}
+    Id parentId;
+    // we know that we are generating pdf before attachment by the fact we have oppId set (see line 379)
+    if (oppId != null) {
+      parentId = oppId;
+    // otherwise we have a basket
+    } else {
+      parentId = basketId;
+    }
 
-		List<Attachment> attList = 	[SELECT Id, Name, Body, ParentId 
-										FROM Attachment 
-										WHERE ParentId = :parentId 
-										AND Name = :TEMP_ONLINE_QUOTE_ATT_NAME];
-		
-		// If there is no attachment, create one
+    List<Attachment> attList =   [SELECT Id, Name, Body, ParentId 
+                    FROM Attachment 
+                    WHERE ParentId = :parentId 
+                    AND Name = :TEMP_ONLINE_QUOTE_ATT_NAME];
+    
+    // If there is no attachment, create one
         if(attList.size() > 0) {
             att = attList[0];
         } else {
@@ -2164,12 +2184,12 @@ public class CS_QuoteOnlineTemplateController {
         att.Name = TEMP_ONLINE_QUOTE_ATT_NAME;
         upsert att;
 
-		String footerCode = summaryTableHeading == 'British Gas' ? 'BG': 'SG';
+    String footerCode = summaryTableHeading == 'British Gas' ? 'BG': 'SG';
        
         PageReference pr = new PageReference('/apex/CS_QuoteOnlineActualPdf');
         pr.getParameters().put('pageAttId', att.id);
-		pr.getParameters().put('quoteRef', inputQuoteData.quoteNumber);
-		pr.getParameters().put('footerCode', footerCode);
+    pr.getParameters().put('quoteRef', inputQuoteData.quoteNumber);
+    pr.getParameters().put('footerCode', footerCode);
         pr.setRedirect(true);
         return pr;
     }

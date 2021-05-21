@@ -43,6 +43,7 @@ private class CS_InstallationNotesControllerTest {
         appointment.OwnerId = user.id;
         appointment.Start__c = Datetime.newInstance(2016,5,5,12,30,0);
         appointment.End__c = Datetime.newInstance(2016,5,5,14,30,0);
+        appointment.skill_number__c=10;
         insert appointment;
         
         

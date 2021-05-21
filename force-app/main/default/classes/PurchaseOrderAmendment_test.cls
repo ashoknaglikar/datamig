@@ -970,7 +970,7 @@ public class PurchaseOrderAmendment_test {
         OrdLine3.Supplier__c=supplier2.Id;
         
         //insert OrdLine3;
-        
+        Test.startTest();
         ApexPages.StandardController stdCancelController = new ApexPages.StandardController(job);
         job=(Job__c)stdCancelController.getRecord();
         //PurchaseOrderGenertion POGen =new PurchaseOrderGenertion(stdCancelController);
@@ -997,7 +997,7 @@ public class PurchaseOrderAmendment_test {
         System.debug('------ ratecards = ' + ratecards);
         System.debug('------ ratecards[0].P5_Supplier__r = ' + ratecards[0].P5_Supplier__r);
         
-        test.startTest();
+        
         POAmend.generateItineryMaterialOrder(m_SelectedJobElementMap, supplier2.Supplier_Num__c, m_Rate);
         //POGen.generateItineryMaterialOrder(m_SelectedJobElementMap, supplier2.Supplier_Num__c,l_RateCardItems );
         //POAmend.back();

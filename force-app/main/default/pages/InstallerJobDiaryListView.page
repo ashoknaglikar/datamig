@@ -128,14 +128,14 @@ body {
                 </apex:pageBlockButtons>
             </apex:pageBlock>
             
-            <apex:pageBlock id="third"  title="WorkDay Reports" rendered="{!IF(AND(workdayReport, OR(contains($Profile.Name,'CHI Standard Installer'), contains($Profile.Name,'CHI Installation Lead Engineer'), contains($Profile.Name,'System Administrator'), contains($Profile.Name,'CHI Standard Installer'), contains($Profile.Name,'CHI Installation Lead Engineer'),contains($Profile.Name,'CHI Installation - AHM'),contains($Profile.Name,'CHI Installation - DHM') )),true,false)}">
+            <apex:pageBlock id="third"  title="WorkDay Reports" rendered="{!IF(AND(workdayReport, OR(contains($Profile.Name,'CHI Standard Installer'), contains($Profile.Name,'CHI Installation Lead Engineer'), contains($Profile.Name,'Administrator'), contains($Profile.Name,'CHI Standard Installer'), contains($Profile.Name,'CHI Installation Lead Engineer'),contains($Profile.Name,'CHI Installation - AHM'),contains($Profile.Name,'CHI Installation - DHM') )),true,false)}">
                 <apex:pageblocksection id="thesection">
                     <apex:pageblocksectionItem id="thesection1">
                         <apex:outputLabel value="Start Date:" for="startDate"></apex:outputLabel>
                         <apex:inputfield value="{!obj_Job3.Job_Notification_Date__c}"
                             id="startDate" />
                     </apex:pageblocksectionItem>
-                     <apex:pageblocksectionItem id="thesection3" rendered="{!IF(OR(contains($Profile.Name,'System Administrator'), contains($Profile.Name,'CHI Installation - AHM'),contains($Profile.Name,'CHI Installation - DHM'),contains($Profile.Name,'CHI Installation - Operations Manager') ),true,false)}">
+                     <apex:pageblocksectionItem id="thesection3" rendered="{!IF(OR(contains($Profile.Name,'Administrator'), contains($Profile.Name,'CHI Installation - AHM'),contains($Profile.Name,'CHI Installation - DHM'),contains($Profile.Name,'CHI Installation - Operations Manager') ),true,false)}">
                         <apex:outputLabel value="Installer" for="inst"></apex:outputLabel>
                         <apex:inputfield value="{!Week.Employee__c}" id="inst"/>  
                     </apex:pageblocksectionItem>

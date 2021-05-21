@@ -1,0 +1,5 @@
+list<string> jobNames = new list<string> {'JOB-2324145', 'JOB-2322147'};
+list<Job__c> jobList =[Select id,Installation_Type__c, Boiler_Location__c,  Total_Hours__c,Balancing_Skill__c from Job__c where name in :jobNames];
+
+jobList = jobtriggerHelper.calculateBalancingMechanicalHoursReturnJobs(jobList, false);
+update jobList;

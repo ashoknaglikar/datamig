@@ -76,26 +76,29 @@ public class AvailabilityP1Controller {
    
     // CR For Diary Start & End Time Changes Starts
     
-    integer [] startHour2hr = new integer[]{7,9,11,13,15,17,19};
-    integer [] endHour2hr =   new integer[]{9,11,13,15,17,19,20};
+    integer [] startHour2hr = new integer[]   {07,09,11,13,15,17,19};
+    integer [] startMinutes2hr = new integer[]{00,00,00,00,30,00,00};
+    integer [] endHour2hr =   new integer[]   {09,11,13,15,17,19,20};
+    integer [] endMinutes2hr =   new integer[]{00,00,00,30,00,00,30};
     
     // CR For Diary Start & End Time Changes Ends
     
    
     // CR For Diary Start & End Time Changes Starts
-   integer [] startMinutes2hr = new integer[]{0,0,0,0,30,30,0};
-   integer [] endMinutes2hr =   new integer[]{0,0,0,30,30,0,30};
+   
+   
     // CR For Diary Start & End Time Changes Ends
     
    //Define the appointment period start and end times for period appts. Array positions must correspond. 
    // CR For Diary Start & End Time Changes Starts
    integer [] startHourHlf = new integer[]{7, 13, 17, 7};
-   integer [] endHourHlf =   new integer[]{13, 17, 19, 21};
+   integer [] endHourHlf =   new integer[]{13, 17, 21, 21};
    // CR For Diary Start & End Time Changes Starts
    
     // CR For Diary Start & End Time Changes Starts
-   integer [] startMinutesHlf = new integer[]{0,0,30,0};
-   integer [] endMinutesHlf =   new integer[]{0,30,30,0};
+  
+   integer [] startMinutesHlf = new integer[]{00,00,00,00};
+   integer [] endMinutesHlf =   new integer[]{00,00,00,00};
     // CR For Diary Start & End Time Changes Ends
     
     // CR for SS
@@ -107,7 +110,7 @@ public class AvailabilityP1Controller {
     //Define the appointment period labels to display on the availability page for 2 hour appts and period appts 
   
     // CR For Diary Start & End Time Changes Starts
-    String [] timeTitle2hr = new String[] {'07:00-09:00','09:00-11:00','11:00-13:00','13:00-15:30','15:30-17:30','17:30-19:00','19:00-20:30'};
+    String [] timeTitle2hr = new String[] {'07:00-09:00','09:00-11:00','11:00-13:00','13:00-15:30','15:30-17:00','17:00-19:00','19:00-20:30'};
     String [] timeTitlehlf = new String[] {'AM','PM','Evening','Any Time'};
     // CR For Diary Start & End Time Changes Ends
     
@@ -1259,14 +1262,18 @@ public class AvailabilityP1Controller {
                     queryLimit = 1000; 
                 }*/
                 
-                TOA_Product_Interest__c toaPI = TOA_Product_Interest__c.getinstance(productInt);
+                system.debug('Sugu '+productInt );
+                
+                TOA_Product_Interest__c toaPI = TOA_Product_Interest__c.getinstance(thisopp.Product_interest__c);
                     String ToaProductInterest='';
                     for(TOA_Product_Interest__c t:TOA_Product_Interest__c.getAll().values())
                     {
+                        system.debug('Sugu '+t );
                         if(t.Skill_Number__c!=null&&toaPI.Max_Skill_number__c==t.Skill_Number__c)
                         ToaProductInterest=t.name;
                     }
-                    
+                  
+                  system.debug('Sugu '+ToaProductInterest)  ;
                 
                 //Guided Sale Changes
                 if(Remote_Quote_Product__c.getInstance(thisOpp.product_interest__c) != null)
@@ -1281,7 +1288,7 @@ public class AvailabilityP1Controller {
                         and end_date__c >= :queryStartDate
                         and r.Role__r.Employee__r.Pool_Type__c = null
                         and r.Role__r.Employee__r.Primary_Role__c != 'Pool' 
-                        //and product_interest__c INCLUDES (:ToaProductInterest)
+                        and product_interest__c INCLUDES (:ToaProductInterest)
                         ORDER BY r.Role__r.Employee__c
                         limit :queryLimit]){
                             Emps.add(rleDistrict.Role__r.Employee__c);

@@ -158,7 +158,7 @@ trigger bUPD_chkJobInstalled on Opportunity (before insert,before update) {
               Reason: User cannot cancel Opportunity from the Picklist value, they should use the Cancel button.
             */
             // Defect fix - CHI Small conversion - Close CHI Lead through inbound call scripts
-            if(!opp.isSystem__c && opp.Stagename == 'Closed Lost' && opp.Can_Close_Lead__c =='False' && opp.By_Pass_User_Validation__c == false) 
+            if(!opp.isSystem__c && opp.Stagename == 'Closed Lost' && trigger.oldmap.get(opp.Id).Stagename != 'Closed Lost' && opp.Can_Close_Lead__c =='False' && opp.By_Pass_User_Validation__c == false) 
             {
                 opp.addError('Cannot make an Opportunity Closed Lost from this field, please use the Cancel button.');
             }

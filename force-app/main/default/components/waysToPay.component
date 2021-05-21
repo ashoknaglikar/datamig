@@ -20,7 +20,7 @@
                             </p>
                             
                         <h3 style="font-size:15px;color: #00baf2;font-weight:bold;">Loans arranged through British Gas</h3>
-                        <div class="boldText" style="font-size:15px">24 month interest-free loan (0% APR)</div>
+                        <div class="boldText" style="font-size:15px;">24 month interest-free loan (0% APR)</div>
                             <ul style="font-size: 13px;">
                                 <li>No deposit needed</li>
                                 <li>No interest payable during the 24 months.</li>
@@ -429,8 +429,8 @@
             
             <!----------------------------------------------old version ------------------------------------------------------------------------------------------>
             
-            <apex:outputPanel rendered="{!if(wayToPayVersion==1,true,false)}">
-           <div class="content" style="page-break-before: always;display:{!if(wayToPayVersion==1, "block", "none")};">
+            <apex:outputPanel rendered="{!if(OR(wayToPayVersion==1,wayToPayVersion==3),true,false)}">
+           <div class="content" style="page-break-before: always;display:{!if(OR(wayToPayVersion==1,wayToPayVersion==3), "block", "none")};">
                 <div class="clearfix" id="logoPng3">
                     <apex:image id="theImageBG2_" styleClass="bgLogo" value="{!URLFOR($Resource.quoteOnlinePageRes, 'BG_logo_s.resource')}" width="150" rendered="{!logoBG == true}" />
                     <apex:image id="theImageSG2_" styleClass="bgLogo" value="{!URLFOR($Resource.quoteOnlinePageRes, 'SG_logo_s.resource')}" width="150" rendered="{!logoBG == false}" />
@@ -445,12 +445,13 @@
                             </p>
                             
                         <h3 style="font-size:15px;color: #00baf2;font-weight:bold;">Loans arranged through British Gas</h3>
-                        <div class="boldText" style="font-size:15px">24 and 30-month interest-free loan (0% APR)</div>
+                        <div class="boldText" style="font-size:15px;"><apex:outputText rendered="{!IF(wayToPayVersion==1,true,false)}">24 and 30-month interest-free loan (0% APR)</apex:outputText><apex:outputText rendered="{!IF(wayToPayVersion==3,true,false)}" >24, 30 and 36 month interest free loan (0% APR)</apex:outputText></div>
+                        
                             <ul style="font-size: 13px;">
-                                
-                                <li>Available over 24 and 30 months at 0%</li>
+                                <li><apex:outputText rendered="{!IF(wayToPayVersion==1,true,false)}">Available over 24 and 30 months at 0%</apex:outputText><apex:outputText rendered="{!IF(wayToPayVersion==3,true,false)}">Available over 24, 30 or 36 months at 0% APR</apex:outputText></li>
                                 <li>No deposit needed</li>
                                 <li>No interest payable during the loan period.</li>
+                                
                             </ul>
 
                         <div class="boldText" style="font-size:15px">60 to 120 month loan ({!aprUsed} APR)</div> 
@@ -515,7 +516,7 @@
 
                         </tr>
                         <tr>
-                            <td class="boldText" style="padding-left: 1em;text-align: left; background-color: #C8C8C8;border:2px solid white">Length of loan</td>
+                            <td class="boldText" style="padding-left: 1em;text-align: left; background-color: #C8C8C8;border:2px solid white">Length of loan (in months)</td>
                             <apex:repeat value="{!inputQuoteData.monthlist}" var="length">
                             <td class="boldText" style="text-align: center; background-color: #C8C8C8;border:2px solid white">{!length} months</td></apex:repeat>
                             

@@ -31,8 +31,32 @@ trigger AppointmentBeforeInsert on Appointment__c (before insert,before update) 
 	    pah.populateTimes(Trigger.new);
     }
     
+    Map<id, Opportunity> oppMap;
+    if(trigger.isinsert)
+    {
+            set<id> oppid= new set<id>();
+            
+             for(Appointment__c app : Trigger.new) {
+                if(app.Skill_Product_Interest__c==null)
+                oppid.add(app.opportunity__c); 
+             }
+            if(!oppid.isempty())
+               oppMap = new Map<id, Opportunity>([Select id, Product_Interest__c from Opportunity where Id in :oppid]);
+            
+    }
     
     for(Appointment__c newApp : Trigger.new) {
+         if(newApp.Skill_Product_Interest__c==null&&oppMap!=null)
+         newApp.Skill_Product_Interest__c=oppMap.containsKey(newApp.opportunity__c)?oppMap.get(newApp.opportunity__c).Product_Interest__c:null;
+        //populate skill number on appointments
+    	 if(newApp.Skill_Product_Interest__c!=null && newApp.Skill_number__c==null )
+	        {
+	          TOA_Product_Interest__c pi= TOA_Product_Interest__c.getinstance(newApp.Skill_Product_Interest__c);
+	          if(pi!=null&& pi.Skill_number__c!=null)
+	          newApp.Skill_number__c = pi.Skill_number__c;
+	          else if(pi!=null &&pi.Max_Skill_Number__c!=null)
+	          newApp.Skill_number__c=pi.Max_Skill_Number__c;
+	        }
         
         if(trigger.isinsert)
         {
@@ -53,11 +77,7 @@ trigger AppointmentBeforeInsert on Appointment__c (before insert,before update) 
     	            newApp.Time_Band__c = 'AT';
 	        }  
 	        
-	        if(newApp.Appointment_Product_Interest__c!=null)
-	        {
-	          TOA_Product_Interest__c pi= TOA_Product_Interest__c.getinstance(newApp.Appointment_Product_Interest__c);
-	          newApp.Skill_number__c = pi.Skill_number__c;
-	        }
+	       
 	        
 	        
 	        // If the record type indicated this is a booked Appointment being inserted, 
