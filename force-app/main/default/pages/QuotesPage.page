@@ -169,8 +169,19 @@
                          </apex:pageBlockSection>
             </apex:pageBlockSection>
             
-            <apex:pageBlockSection title="Current Product Holdings & Part Number Criteria (Included)" columns="2" collapsible="true" >
-                            
+            <apex:pageBlockSection >
+                <apex:pageBlockSection title="Lead Number Last Digit (Included)" columns="1" collapsible="true" >
+                            <apex:pageBlockSectionItem >
+                                <apex:outputLabel ><b>Last Digit : </b></apex:outputLabel>
+                                <c:MultiselectPicklist leftLabel="Available values"
+                                    leftOptions="{!LeadLastDigitOptions}"
+                                    rightLabel="Selected Values"
+                                    rightOptions="{!allLastDigitSelected}"
+                                    size="5"
+                                    width="200px"/>
+                           </apex:pageBlockSectionItem>
+                         </apex:pageBlockSection>
+               <apex:pageBlockSection title="Current Product Holdings & Part Number Criteria (Included)" columns="1" collapsible="true" >
                             <apex:pageBlockSectionItem >
                                 <apex:outputLabel value="Current Product Holdings "></apex:outputLabel>
                                 <apex:inputText value="{!currentProductHoldings}"/>
@@ -179,7 +190,8 @@
                                 <apex:outputLabel value="Part Number "></apex:outputLabel>
                                 <apex:inputText value="{!partNumber}"/>
                            </apex:pageBlockSectionItem>
-                        </apex:pageBlockSection>
+            </apex:pageBlockSection>
+            </apex:pageBlockSection>
             
             <apex:pageBlockButtons >
                 <!--<apex:commandButton value="Back" action="{!backQuotes}" />-->

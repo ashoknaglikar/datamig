@@ -354,6 +354,7 @@
             global list<String> errorMessage{get;set;}
             global list<string> declinedBy;
             
+            
             global responseWrapper() {
                 
                 this.errorMessage= new list<String>();

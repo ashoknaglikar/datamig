@@ -304,6 +304,7 @@ public class EventToAppointmentSynchronisation {
         oTo.Visit_Type__c           =   oFrom.Visit_Type__c;
         //Added by Cognizant to populate the What id in the Appointment
         String prefixId=oFrom.WhatId;
+        if(prefixId!=null){
         if (prefixId.startsWith(opportunityPrefix)) {
             oTo.Opportunity__c      =   oFrom.WhatId;
         } else if (prefixId.startsWith(jobPrefix)) {
@@ -312,6 +313,7 @@ public class EventToAppointmentSynchronisation {
             oTo.Case__c=oFrom.WhatId;
         }else if(prefixId.startsWith(jobElePrefix)) {
             oTo.Job_Element__c=oFrom.WhatId;
+        }
         }
                   oTo.Call_Notes__c=oFrom.Call_Notes__c;
         

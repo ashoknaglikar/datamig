@@ -1,0 +1,93 @@
+<apex:component controller="CalenderViewController">
+<html>
+<head>
+    <script src="/js/functions.js"></script>
+    <script src="/soap/ajax/17.0/connection.js"></script>
+    <script src="/soap/ajax/17.0/apex.js"></script>
+
+ <style>
+     .bPageBlock .detailList .data2Col  first 
+        {
+            padding-bottom: 2px; !important
+        }
+ </style>   
+    
+</head>
+<apex:form id="myform">
+<body>
+<apex:pageBlock title="Calendar">
+       <apex:pagemessages />
+        <apex:outputpanel rendered="{!!isAdmin}" >
+        <table>
+            <tr>
+                <td>
+                    <label><b>Start Date :</b></label>
+                </td>
+                <td>
+                    <apex:inputField value="{!opp.Actual_Call_Back_Date__c}">&nbsp;<apex:commandButton value="Search" action="{!search}" rerender="myform"/></apex:inputField>
+                </td>
+                <td>
+                    <apex:outputLink value="/apex/calendarviewPageTAB?searchdate={!srhdate}&usr={!opp.Small_Commercial_Agent__c}" target="_blank" rendered="{!!isFullView}">Open in Full Window</apex:outputLink>
+                </td>
+            </tr>
+        </table> 
+      </apex:outputpanel> <br/>
+      
+      <apex:outputpanel rendered="{!isAdmin}" >
+          <apex:pageBlockSection columns="2" >
+              
+                  <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Start Date: </apex:outputLabel>
+                    <apex:inputField value="{!opp.Actual_Call_Back_Date__c}">&nbsp;<apex:commandButton value="Search" action="{!search}" rerender="myform"/> &nbsp;&nbsp;<apex:outputLink value="/apex/calendarviewPageTAB?searchdate={!srhdate}&usr={!opp.Small_Commercial_Agent__c}" target="_blank" rendered="{!!isFullView}">Open in Full Window</apex:outputLink></apex:inputField>
+                  </apex:pageBlockSectionItem>
+              
+              <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="User"/>
+              <apex:inputField value="{!opp.Small_Commercial_Agent__c}"/>
+              </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+      </apex:outputpanel>
+      
+      <apex:outputPanel rendered="{!IF(eveWrapList.size>0,true,false)&&!isInstaller}" >
+          <span style="float:right;"><span style="background-color:blue;border:1px solid blue;padding-right:2px;"></span>&nbsp;Busy&nbsp;&nbsp;<span style="background-color:red;border:1px solid red;padding-right:2px;"></span>&nbsp;Unavailable&nbsp;&nbsp;<span style="background-color:green;border:1px solid green;padding-right:2px;"></span>&nbsp;Available</span>
+      </apex:outputPanel>
+      
+      <apex:pageBlockSection columns="1" rendered="{!IF(eveWrapList.size>0,true,false)}">
+      <apex:repeat value="{!eveWrapList}" var="eveDay">
+          <apex:outputText style="font-weight:bold;padding-bottom:2px;" value="{!eveDay.day}"/>
+          <apex:repeat value="{!eveDay.events}" var="eve" >
+                   <apex:outputText style="padding-left:15px; !important" rendered="{!eve.even.recordtype.name!='Installation'}" escape="false">{!eve.timeslot}&nbsp;&nbsp;&nbsp;&nbsp; <span style="{!IF(isInstaller,'display:none;',IF(eve.even.recordtype.name=='Unavailable','background-color:red;border:1px solid red;',IF(eve.even.recordtype.name=='Available','background-color:green;border:1px solid green;','background-color:blue;border:1px solid blue;')))};height:100%;padding-right:2px;"></span>&nbsp;
+                   <a href="/{!eve.even.appointmentID__c}" target="_blank" 
+                    id="lookup{!eve.even.id}" position="relative"
+                    onblur="LookupHoverDetail.getHover('lookup{!eve.even.id}').hide();"
+                    onfocus="LookupHoverDetail.getHover('lookup{!eve.even.id}', '/{!eve.even.appointmentID__c}/m?retURL=/{!eve.even.appointmentID__c}&isAjaxRequest=1').show();"
+                    onmouseout="LookupHoverDetail.getHover('lookup{!eve.even.id}').hide();"
+                    onmouseover="LookupHoverDetail.getHover('lookup{!eve.even.id}', '/{!eve.even.appointmentID__c}/m?retURL=/{!eve.even.appointmentID__c}&isAjaxRequest=1').show();">
+                    {!eve.even.subject}</a> &nbsp;<apex:outputText value="{!eve.cuscategory}" escape="false"/></apex:outputText>
+                    
+                    
+                    <apex:outputText style="padding-left:15px; !important" rendered="{!eve.even.recordtype.name=='Installation'}">{!eve.timeslot}&nbsp;&nbsp;&nbsp;&nbsp; <!--<span style="{!IF(eve.even.showAs=='Busy','background-color:blue;border:1px solid blue;',IF(eve.even.showAs=='OutOfOffice','background-color:#FFD700;border:1px solid #FFD700;','background-color:red;border:1px solid red;'))};height:100%;padding-right:2px;"></span>&nbsp;-->
+                   <a href="/{!eve.even.whatid}" target="_blank"
+                    id="lookup{!eve.even.id}" position="relative"
+                    onblur="LookupHoverDetail.getHover('lookup{!eve.even.id}').hide();"
+                    onfocus="LookupHoverDetail.getHover('lookup{!eve.even.id}', '/{!eve.even.appointmentID__c}/m?retURL=/{!eve.even.appointmentID__c}&isAjaxRequest=1').show();"
+                    onmouseout="LookupHoverDetail.getHover('lookup{!eve.even.id}').hide();"
+                    onmouseover="LookupHoverDetail.getHover('lookup{!eve.even.id}', '/{!eve.even.appointmentID__c}/m?retURL=/{!eve.even.appointmentID__c}&isAjaxRequest=1').show();">
+                    {!eve.even.subject}</a></apex:outputText>
+                    
+                   
+         </apex:repeat><br/>
+      </apex:repeat>
+      </apex:pageBlockSection>
+      
+    <apex:pageBlockSection rendered="{!IF(eveWrapList.size>0,false,true)}">
+        <p>You have no appointments scheduled for the next 7 days.</p>
+    </apex:pageBlockSection>
+             
+    </apex:pageBlock>
+    </body>
+   </apex:form>
+   
+   </html>
+
+</apex:component>

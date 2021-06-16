@@ -96,8 +96,10 @@
                 document.getElementById('LoadingDiv').style.display = show;      
             }  
         
-    </script>   
-    <apex:form id="commercialForm"  rendered="{!!domestic}">
+    </script>  
+    
+    <apex:pageMessages />
+    <apex:form id="commercialForm"  rendered="{!!domestic&&!isError}">
         <apex:pageblock id="comblock1" >
         <apex:pageblocksection >
              <apex:repeat value="{!$ObjectType.Finance_Application__c.FieldSets.Commercial_Fieldset}" 
@@ -114,7 +116,7 @@
 
 
     </apex:form> 
-    <apex:form id="form" rendered="{!domestic}">
+    <apex:form id="form" rendered="{!domestic&&!isError}">
         
             <apex:pageblock id="block1" >
                 <apex:actionFunction action="{!financeProductSel}" name="financeProductSel" rerender="block1" immediate="true">

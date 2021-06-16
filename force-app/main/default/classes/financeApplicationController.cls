@@ -59,7 +59,10 @@ public class financeApplicationController {
     public string LoanPeriod;
     public string InterestValue;
     public string QuoteID;
+    public string newQuoteAmount;
+    public string QuoteName;
     public boolean isFromFlow;
+    public boolean isError{get;set;}
     
     public list<Appointment__c> AppointmentList;
     
@@ -67,26 +70,55 @@ public class financeApplicationController {
     {
           //Suguna
           isFromFlow=false;
+          isError=false;
           TOF = ApexPages.currentPage().getParameters().get('TOF');
           PayMethod = ApexPages.currentPage().getParameters().get('PayMethod');
           DepositValue = ApexPages.currentPage().getParameters().get('DepositValue');
           LoanPeriod = ApexPages.currentPage().getParameters().get('LoanPeriod');
           InterestValue = ApexPages.currentPage().getParameters().get('InterestValue');
           QuoteID = ApexPages.currentPage().getParameters().get('QuoteID');
+          newQuoteAmount = ApexPages.currentPage().getParameters().get('newQuoteAmount');
+          oppId = ApexPages.currentPage().getParameters().get('oppId');
+          QuoteName = ApexPages.currentPage().getParameters().get('QuoteName');
           
-          if(QuoteID!=null)
+          
+          if(QuoteID!=null||oppId!=null)
+          isFromFlow=true;
+          if(QuoteID!=null&&oppId==null)
           {
-            isFromFlow=true;
             oppId = [select opportunity__c from BigMachines_Quote__c where id=:QuoteID].opportunity__c;
           }
           
+          if(PayMethod!=null && PayMethod=='cash')
+          {
+              isError=true;
+              ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'This Customer is not eligible for Finance as it is a Cash Job.'));
+              return;
+          }
+         
+         
+        fa = new Finance_Application__c();
+        fa = (Finance_Application__c)controller.getRecord();
+        opp= new Opportunity();
+        fp = new Finance_Product__c();
+        
         faTemp = new Finance_Application__c();
         financeProductsList = new list<SelectOption>();
         financeProductsList.add(new selectoption('', '--None--'));
-        for(Finance_Product__c financeProd : [Select Finance_options__c from Finance_Product__c where salesforce__c=true order by Order__c])
+        for(Finance_Product__c financeProd : [Select Finance_options__c,Tenure_in_Months__c,Interest_Rate__c from Finance_Product__c where salesforce__c=true order by Order__c])
         {
             financeProductsList.add(new selectoption(financeProd.Finance_options__c,financeProd.Finance_options__c ));
+            if(LoanPeriod!=null && InterestValue!=null && !financeProd.Finance_options__c.contains('HC'))
+            {   
+                Decimal interestrate = decimal.valueof(InterestValue.remove('£'))>0?9.900:0;
+                system.debug('Sugu '+interestrate+' - '+financeProd.Tenure_in_Months__c+' - '+financeProd.Interest_Rate__c);
+                if(LoanPeriod==String.valueof(financeProd.Tenure_in_Months__c)&&interestrate==financeProd.Interest_Rate__c)
+                fa.Finance_Options__c= financeProd.Finance_options__c;
+            }
         }
+        
+        if(TOF!=null)
+        fa.Type_of_Finance__c=TOF=='HSA'?'HSA':'e-Finance';
         
         domestic = true; 
 
@@ -118,10 +150,7 @@ public class financeApplicationController {
         stage = 1;
         list<Finance_Application__c> faList = new list<Finance_Application__c>();
         
-        fa = new Finance_Application__c();
-        fa = (Finance_Application__c)controller.getRecord();
-        opp= new Opportunity();
-        fp = new Finance_Product__c();
+        
         
 
         fpSelected = '';
@@ -206,18 +235,23 @@ public class financeApplicationController {
             
             if(!domestic)
             fa.RecordTypeId = RecordTypeIdHelper.getrecordTypeid('Finance_Application__c', 'Commercial');
+            if(QuoteName!=null)
+            fa.Quote_Number__c = QuoteName; 
             if(opp.Bigmachines_Quotes__r.size()>0)
             { 
                 fa.Portal_Quote__c = opp.Bigmachines_Quotes__r[0].Id;
                 if(isFromFlow)
                 {
-                   for(Bigmachines_Quote__c bm: opp.Bigmachines_Quotes__r)
-                   {
-                       if(QuoteID==bm.id)
-                       fa.Portal_Quote__c = bm.Id;
-                   }
+                    if(QuoteId!=null&&QuoteId!=''){
+                       for(Bigmachines_Quote__c bm: opp.Bigmachines_Quotes__r)
+                       {
+                           if(QuoteID==bm.id)
+                           fa.Portal_Quote__c = bm.Id;
+                       }
+                    }
+                    else
+                    fa.Portal_Quote__c=null;
                 }
-                
             }
             else
             fa.Quote_Number__c =  'C'+opp.CHI_Lead_Id__c+'0';
@@ -238,7 +272,7 @@ public class financeApplicationController {
            calculateFinance();
            getQuote();
            startApplication();
-           fa.Type_of_Finance__c=TOF;
+           
        }
     }
     map<id, Finance_Product__c> fpMap;
@@ -301,18 +335,23 @@ public class financeApplicationController {
     
     public void calculateFinance()
     {
-        if(fa.Portal_Quote__c==null && fa.Quote_number__c == null)
+        if(fa.Portal_Quote__c==null && fa.Quote_number__c == null && !isFromFlow)
         {
             util.setErrorMsg(true, 'Please enter either the Quote Number or pick an exisitng Quote' );
            
             return;
         }
+        
+        fa.Deposit__c=  DepositValue!=null?Decimal.valueof(DepositValue.remove('£')):0;
+        fa.Job_Total__c = newQuoteAmount!=null?Decimal.valueof(newQuoteAmount.remove('£')):0;
+        fa.Cash_Price__c = newQuoteAmount!=null?Decimal.valueof(newQuoteAmount.remove('£')):0;
+        
         if(fa.Portal_Quote__c!=null)
         {
-        BigMachines_Quote__c b = [Select id, 	finalNetQuoteTotal__c, depositOnPricing__c from BigMachines_Quote__c where id = :fa.Portal_Quote__c];
-        fa.Job_Total__c = b.finalNetQuoteTotal__c;
-        fa.Deposit__c = DepositValue!=null?Decimal.valueof(DepositValue.remove('£')):b.depositOnPricing__c;
-        fa.Cash_Price__c = fa.Job_Total__c - fa.Deposit__c;
+            BigMachines_Quote__c b = [Select id, 	finalNetQuoteTotal__c, depositOnPricing__c from BigMachines_Quote__c where id = :fa.Portal_Quote__c];
+            fa.Job_Total__c = newQuoteAmount!=null?Decimal.valueof(newQuoteAmount.remove('£')):b.finalNetQuoteTotal__c;
+            fa.Deposit__c = DepositValue!=null?Decimal.valueof(DepositValue.remove('£')):b.depositOnPricing__c;
+            fa.Cash_Price__c = fa.Job_Total__c - fa.Deposit__c;
         }
         productPanel = true;
     }
@@ -671,7 +710,7 @@ public class financeApplicationController {
     
     private decimal returnPaymentMonthly(Decimal amount, decimal term, decimal aprDecimal) {  
         system.debug('aprDecimal-->'+aprDecimal);
-    	Decimal monthlyPayment = (amount / (term*12)).setscale(2,roundingmode.HALF_EVEN);
+    	Decimal monthlyPayment = (amount / (term*12)).setscale(2,RoundingMode.HALF_UP);
     	// return payment is equally divided by 24 (months) if the term is 2 years
 
     	if (aprDecimal >0) {
@@ -690,7 +729,8 @@ public class financeApplicationController {
 
 	        monthlyPayment = 0.00;
 	        if(value3!=0){
-	           monthlyPayment =  (value1 / value3).setScale(2);        
+	            system.debug('Sugu '+(value1 / value3));
+	           monthlyPayment =  (value1 / value3).setScale(2,RoundingMode.HALF_UP);        
 	        }
 	    } 
 

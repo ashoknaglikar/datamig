@@ -1092,7 +1092,8 @@ public class AppointmentToEventSynchronisation {
         //oTo.SystemModstamp = oFrom.SystemModStamp;
     
         // Added as part of CR - Display Employee Type on multi user calender view.
-        
+        oTo.Skill_number__c= oFrom.Skill_number__c;
+        oTo.Skill_description__c=oFrom.Skill_Product_Interest__c;
         oTo.Employee_Type__c = oFrom.Employee_Type__c;
         oTo.Customer_Category__c = oFrom.Customer_Category__c;
         return oTo; 

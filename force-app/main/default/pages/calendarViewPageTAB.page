@@ -1,0 +1,3 @@
+<apex:page controller="CalenderViewController">
+   <c:CalendarViewComponent />
+</apex:page>
